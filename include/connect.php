@@ -6,7 +6,6 @@ define("HOST", "usersrv01.cs.virginia.edu");
 define("DB_NAME", "pwt5ca");
 
 $dsn = "mysql:host=" . HOST . ";dbname=" . DB_NAME;
-$db = null;
 
 /** connect to the database **/
 try {
