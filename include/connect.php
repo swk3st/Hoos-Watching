@@ -1,7 +1,9 @@
 <?php
 
+require_once("secret.php");
+
 define("USERNAME", "pwt5ca");
-define("PASSWORD", "ilebHF1wf4OtsvpGvkb!");
+// define("PASSWORD", ""); // Secret
 define("HOST", "usersrv01.cs.virginia.edu");
 define("DB_NAME", "pwt5ca");
 
