@@ -1,4 +1,6 @@
-<?php require_once("include/db_interface.php"); ?>
+<?php
+require_once("include/db_interface.php");
+ ?>
 
 <!doctype html>
 <html lang="en">
@@ -30,6 +32,18 @@
                 </li>
             <?php endforeach; ?>
         </ol>
+    </div>
+
+    <div class="container">
+        <?php
+        // $user_exists = check_user_exists("pwt5ca@virginia.edu");
+        // echo json_encode($user_exists);
+        
+        create_new_user('pwt5ca@virginia.edu', 'my_password');
+
+        // $user_exists = check_user_exists("pwt5ca@virginia.edu");
+        // echo json_encode($user_exists);
+        ?>
     </div>
 </body>
 

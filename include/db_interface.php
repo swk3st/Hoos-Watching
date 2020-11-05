@@ -5,21 +5,45 @@ require_once("connect.php");
 session_start();
 
 /**
+ * Check if a username is already used.
+ */
+function check_user_exists($email)
+{
+    global $db;
+
+    $sql = "SELECT count(*) FROM Users WHERE email=?";
+
+    $statement = $db->prepare($sql);
+    $statement->bind_param("s", $email);
+    $results = $statement->execute();
+    $user_exists = 0;
+    $statement->bind_result($user_exists);
+    if ($results) {
+        $statement->fetch();
+        return $user_exists == 1;
+    }
+    $statement->close();
+    return false;
+}
+
+/**
  * Create a new user given an email and a password.
  */
 function create_new_user($email, $password)
 {
-    global $db;
+    // global $db;
 
     $password_hashed = password_hash($password, PASSWORD_DEFAULT);
-    $sql = "INSERT INTO Users (email, password) VALUES (?, ?)";
+    // $sql = "INSERT INTO Users (email, password) VALUES (?, ?)";
 
-    $statement = $db->prepare($sql);
-    $statement->bind_param("ss", $name, $password_hashed);
-    if (!$statement->execute()) {
-        die("Error executing create_new_user query.");
-    }
-    $statement->close();
+    // $statement = $db->prepare($sql);
+    echo "yay $email $password_hashed";
+    // $statement->bind_param("ss", $name, $password_hashed);
+    // $statement->execute();
+    // // if (!$statement->execute()) {
+    // //     die("Error executing create_new_user query.");
+    // // }
+    // $statement->close();
 }
 
 /**
@@ -77,17 +101,17 @@ function get_top_five_movies()
 
         /* execute statement */
         $stmt->execute();
-    
+
         /* bind result variables */
         $title = "";
         $output = array();
         $stmt->bind_result($title);
-    
+
         /* fetch values */
         while ($stmt->fetch()) {
             array_push($output, $title);
         }
-    
+
         /* close statement */
         $stmt->close();
     }
