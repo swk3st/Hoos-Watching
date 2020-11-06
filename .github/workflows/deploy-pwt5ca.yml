@@ -13,7 +13,8 @@ jobs:
 
         VERBOSE: true
         USER: pwt5ca
-        # PORT: 2222 # no need to set this, because of $SSH_ARGS
+        PORT: 22
+        SSH_ARGS: '-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
         ARGS: -avzr --exclude=/.git/
         SOURCE: .
 
