@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [pwt5ca]
+    branches: [dev]
     
 jobs:
   rsync:
@@ -12,7 +12,7 @@ jobs:
         env:
           HOST: portal.cs.virginia.edu
           KEY: ${{secrets.DEPLOY_SSH_KEY}}
-          TARGET: /u/lab/pwt5ca/public_html/pwt5ca
+          TARGET: /u/lab/pwt5ca/public_html/dev
 
           VERBOSE: true
           USER: pwt5ca

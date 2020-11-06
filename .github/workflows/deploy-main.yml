@@ -1,18 +1,18 @@
 on:
   push:
-    branches: [pwt5ca]
-    
+    branches: [main]
+
 jobs:
   rsync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Deploy to server; dev
+      - name: Deploy to server; main
         uses: up9cloud/action-rsync@v1.1
         env:
           HOST: portal.cs.virginia.edu
           KEY: ${{secrets.DEPLOY_SSH_KEY}}
-          TARGET: /u/lab/pwt5ca/public_html/pwt5ca
+          TARGET: /u/lab/pwt5ca/public_html/main
 
           VERBOSE: true
           USER: pwt5ca
