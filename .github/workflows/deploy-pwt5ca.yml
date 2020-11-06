@@ -18,7 +18,7 @@ jobs:
           USER: pwt5ca
           SSH_ARGS: "-p 22 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
           ARGS: -avzr --exclude=/.git/
-          SOURCE: .
+          SOURCE: ./*
 
           PRE_SCRIPT: |
             echo start at:
