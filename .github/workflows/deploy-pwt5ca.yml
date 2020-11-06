@@ -1,20 +1,23 @@
-name: DeployPwt5ca
-on:
-  push:
-    branches:
-    - pwt5ca
-
+on: [push]
 jobs:
-  deploy:
+  rsync:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: rsync deployments
-      uses: burnett01/rsync-deployments@4.1
-      with:
-        switches: -avzr --delete
-        path: .
-        remote_path: /u/lab/pwt5ca/public_html/pwt5ca
-        remote_host: portal.cs.virginia.edu
-        remote_user: pwt5ca
-        remote_key: ${{ secrets.DEPLOY_KEY }}
+    - name: Deploy to server; pwt5ca
+      uses: up9cloud/action-rsync@v1.1
+      env:
+        HOST: portal.cs.virginia.edu
+        KEY: ${{secrets.DEPLOY_SSH_KEY}}
+        TARGET: /u/lab/pwt5ca/public_html/pwt5ca
+
+        VERBOSE: true
+        USER: pwt5ca
+        # PORT: 2222 # no need to set this, because of $SSH_ARGS
+        ARGS: -avzr --exclude=/.git/
+        SOURCE: .
+
+        PRE_SCRIPT: |
+          echo start at:
+          date -u --rfc-3339=ns
+        POST_SCRIPT: "echo done at: && date -u --rfc-3339=ns"
