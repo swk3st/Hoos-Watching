@@ -1,25 +1,20 @@
 <?php
 
+require_once("secret.php");
+
 define("USERNAME", "pwt5ca");
-define("PASSWORD", "");
+// define("PASSWORD", ""); // Secret
 define("HOST", "usersrv01.cs.virginia.edu");
 define("DB_NAME", "pwt5ca");
 
 $dsn = "mysql:host=" . HOST . ";dbname=" . DB_NAME;
 
 /** connect to the database **/
-try {
-    $db = new PDO($dsn, $username, $password);
-    echo "<p>You are connected to the database</p>";
-} catch (PDOException $e)     // handle a PDO exception (errors thrown by the PDO library)
-{
-    // Call a method from any object, 
-    // use the object's name followed by -> and then method's name
-    // All exception objects provide a getMessage() method that returns the error message 
-    $error_message = $e->getMessage();
-    echo "<p>An error occurred while connecting to the database: $error_message </p>";
-} catch (Exception $e)       // handle any type of exception
-{
-    $error_message = $e->getMessage();
-    echo "<p>Error message: $error_message </p>";
+// From https://www.php.net/manual/en/mysqli.query.php
+$db = new mysqli(HOST, USERNAME, PASSWORD, DB_NAME);
+// echo "<p>You are connected to the database</p>";
+
+if ($db->connect_errno) {
+    printf("Connect failed: %s\n", $mysqli->connect_error);
+    die();
 }
