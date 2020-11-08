@@ -1,0 +1,26 @@
+on:
+  push:
+    branches: [pwt5ca]
+    
+jobs:
+  rsync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to server; dev
+        uses: up9cloud/action-rsync@v1.1
+        env:
+          HOST: portal.cs.virginia.edu
+          KEY: ${{secrets.DEPLOY_SSH_KEY}}
+          TARGET: /u/lab/pwt5ca/public_html/pwt5ca
+
+          VERBOSE: true
+          USER: pwt5ca
+          SSH_ARGS: "-p 22 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+          ARGS: -avzr --exclude=/.git/
+          SOURCE: ./
+
+          PRE_SCRIPT: |
+            echo start at:
+            date -u --rfc-3339=ns
+          POST_SCRIPT: "echo done at: && date -u --rfc-3339=ns"
