@@ -1,5 +1,32 @@
 <?php
+
 require_once("include/db_interface.php");
+require_once("include/user.php");
+require_once("include/title.php");
+
+// Handle POST requests.
+$login_succeeded = null;
+$creation_succeeded = null;
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    if (isset($_POST['loginEmail']) && isset($_POST['loginPassword'])) {
+        $login_succeeded = login_user($_POST['loginEmail'], $_POST['loginPassword']);
+        if ($login_succeeded) {
+            // Reinit the user so they are logged in.
+            global $user;
+            $user = new User();
+        }
+    }
+
+    if (isset($_POST['createEmail']) && isset($_POST['createPassword'])) {
+        if (check_user_exists($_POST['createEmail'])) {
+            $creation_succeeded = false;
+        } else {
+            create_new_user($_POST['createEmail'], $_POST['createPassword']);
+            $creation_succeeded = check_user_exists($_POST['createEmail']);
+        }
+    }
+}
 ?>
 
 <!doctype html>
@@ -21,33 +48,68 @@ require_once("include/db_interface.php");
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 
     <div class="container">
-        <h1 class="mt-5">Hoo's Watching</h1>
+        <h1 class="mt-5"><a href="<?php echo $_SERVER['PHP_SELF']; ?>">Hoo's Watching</a></h1>
+
         <ol>
             <?php
-            $top_five = get_top_five_movies();
-            foreach ($top_five as $title) :
+            $titles = get_titles(0, 25, SORT_TITLE_USER_RATING, FILTER_TITLES_USER_RATING, 2, false);
+            foreach ($titles as $title) :
             ?>
                 <li>
-                    <?php echo $title; ?>
+                    <?php echo $title['primaryTitle']; ?>
+                    <?php echo $title['startYear']; ?>
+                    <?php echo json_encode($title); ?>
                 </li>
             <?php endforeach; ?>
         </ol>
     </div>
 
     <div class="container">
-        <?php
-        // $user_exists = check_user_exists("pwt5ca@virginia.edu");
-        // echo json_encode($user_exists);
+        <h2>User</h2>
+        <p>Current user:
+            <?php
+            global $user;
+            if (!$user->is_logged_in()) {
+                echo "Not logged in!";
+            } else {
+                echo $user->get_email();
+            }
+            ?>
+        </p>
 
-        if (create_new_user('pwt5ca@virginia.edu', 'my_password')) {
-            echo "Created a new user!";
-        } else {
-            echo "Failed to create a new user: user already exists.";
-        }
+        <div class="border rounded mt-3 p-3">
+            <h3>Log in to an account</h3>
+            <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <!-- From https://getbootstrap.com/docs/4.0/components/forms/ -->
+                <div class="form-group">
+                    <label for="loginEmail">Email address</label>
+                    <input type="email" class="form-control" id="loginEmail" name="loginEmail" aria-describedby="emailHelp" placeholder="Enter email">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" name="loginPassword" placeholder="Password">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
 
-        // $user_exists = check_user_exists("pwt5ca@virginia.edu");
-        // echo json_encode($user_exists);
-        ?>
+        <div class="border rounded mt-3 p-3">
+            <h3>Create an account</h3>
+            <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <!-- From https://getbootstrap.com/docs/4.0/components/forms/ -->
+                <div class="form-group">
+                    <label for="createEmail">Email address</label>
+                    <input type="email" class="form-control" id="createEmail" name="createEmail" aria-describedby="emailHelp" placeholder="Enter email">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+                <div class="form-group">
+                    <label for="createPassword">Password</label>
+                    <input type="password" class="form-control" id="createPassword" name="createPassword" placeholder="Password">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
     </div>
 </body>
 

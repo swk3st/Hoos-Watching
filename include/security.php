@@ -1,6 +1,6 @@
 <?php
 
-define("HASH_ALGO", "sha256");
+define("HASH_ALGO", "sha512"); // Use SHA256 for hashing -- not entirely strong.
 
 /**
  * Hash a user's password with the configured hash algorithm. This does
@@ -20,15 +20,19 @@ function movie_password_hash($password)
 function movie_check_password($password, $password_hash)
 {
     $attempted_hash = hash(HASH_ALGO, $password);
-    return (bool) $attempted_hash === $password_hash;
+    return (bool) (strcmp($attempted_hash, $password_hash) == 0);
 }
 
+/**
+ * Run some simple tests to manually verify that password hashing and verification is working
+ * as intended.
+ */
 function test_security()
 {
     $my_password = "apples123";
     $my_password_hashed = movie_password_hash($my_password);
     echo "My password: " . $my_password . "<br>";
     echo "Hash of my password: " . $my_password_hashed  . "<br>";
-    echo "My password === apples123: " . movie_check_password($my_password, $my_password_hashed) . "<br>";
-    echo "My password === Apples123: " . movie_check_password("Apples123", $my_password_hashed) . "<br>";
+    echo "My password === apples123: " . json_encode(movie_check_password($my_password, $my_password_hashed)) . "<br>";
+    echo "My password === Apples123: " . json_encode(movie_check_password("Apples123", $my_password_hashed)) . "<br>";
 }
