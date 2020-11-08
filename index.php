@@ -1,6 +1,6 @@
 <?php
 require_once("include/db_interface.php");
- ?>
+?>
 
 <!doctype html>
 <html lang="en">
@@ -38,8 +38,12 @@ require_once("include/db_interface.php");
         <?php
         // $user_exists = check_user_exists("pwt5ca@virginia.edu");
         // echo json_encode($user_exists);
-        
-        create_new_user('pwt5ca@virginia.edu', 'my_password');
+
+        if (create_new_user('pwt5ca@virginia.edu', 'my_password')) {
+            echo "Created a new user!";
+        } else {
+            echo "Failed to create a new user: user already exists.";
+        }
 
         // $user_exists = check_user_exists("pwt5ca@virginia.edu");
         // echo json_encode($user_exists);

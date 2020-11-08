@@ -1,6 +1,7 @@
 <?php
 
 require_once("connect.php");
+require_once("security.php");
 
 session_start();
 
@@ -31,19 +32,23 @@ function check_user_exists($email)
  */
 function create_new_user($email, $password)
 {
-    // global $db;
+    global $db;
 
-    $password_hashed = password_hash($password, PASSWORD_DEFAULT);
-    // $sql = "INSERT INTO Users (email, password) VALUES (?, ?)";
+    // First check if the user already exists.
+    if (check_user_exists($email)) {
+        return false;
+    }
 
-    // $statement = $db->prepare($sql);
-    echo "yay $email $password_hashed";
-    // $statement->bind_param("ss", $name, $password_hashed);
-    // $statement->execute();
-    // // if (!$statement->execute()) {
-    // //     die("Error executing create_new_user query.");
-    // // }
-    // $statement->close();
+    $password_hashed = movie_password_hash($password);
+    $sql = "INSERT INTO Users (email, password) VALUES (?, ?)";
+
+    $statement = $db->prepare($sql);
+
+    $statement->bind_param("ss", $email, $password_hashed);
+    $statement->execute();
+    $statement->close();
+
+    return true;
 }
 
 /**
@@ -61,7 +66,7 @@ function login_user($email, $password)
     $stored_password = "";
     $statement->bind_result($stored_password);
     if ($results) {
-        if (password_verify($password, $stored_password)) {
+        if (movie_check_password($password, $stored_password)) {
             $_SESSION['email'] = $email;
             $_SESSION['password'] = $password; // This is a bad practice.
             $statement->close();
