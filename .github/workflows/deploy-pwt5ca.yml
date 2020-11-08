@@ -17,7 +17,7 @@ jobs:
           VERBOSE: true
           USER: pwt5ca
           SSH_ARGS: "-p 22 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
-          ARGS: -avzr --exclude=/.git/
+          ARGS: -avzr --exclude '.git*' --exclude '.gitignore' --exclude '*.md'
           SOURCE: ./
 
           PRE_SCRIPT: |
