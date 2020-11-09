@@ -2,6 +2,7 @@
 
 require_once("connect.php");
 require_once("security.php");
+require_once("user.php");
 
 session_start();
 
@@ -58,37 +59,26 @@ function login_user($email, $password)
 {
     global $db;
 
-    $sql = "SELECT password FROM Users WHERE email=?";
+    $sql = "SELECT password FROM pwt5ca.Users WHERE email=?";
 
     $statement = $db->prepare($sql);
     $statement->bind_param("s", $email);
-    $results = $statement->fetch();
-    $stored_password = "";
+    $statement->execute();
+
+    $stored_password = null;
     $statement->bind_result($stored_password);
-    if ($results) {
+    $statement->fetch();
+    if (!is_null($stored_password)) {
         if (movie_check_password($password, $stored_password)) {
             $_SESSION['email'] = $email;
             $_SESSION['password'] = $password; // This is a bad practice.
             $statement->close();
+
             return true;
         }
     }
     $statement->close();
     return false;
-}
-
-/**
- * Return true if the current user is logged in, otherwise return false.
- */
-function is_logged_in()
-{
-    if (!isset($_SESSION['email']) || !isset($_SESSION['password'])) {
-        return false;
-    }
-    $email = $_SESSION['email'];
-    $password = $_SESSION['password']; // This is a bad practice.
-
-    return login_user($email, $password);
 }
 
 /**
