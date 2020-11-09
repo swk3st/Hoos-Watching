@@ -41,16 +41,17 @@ class User
     }
 
     /**
-     * Remove a friend from the current user's friends.
+     * Add a friend to the current user's friends.
      */
-    public function remove_friend($email)
+    public function add_friend($email)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
             return false;
         }
 
-        $sql = "DELETE FROM Friends WHERE email=? AND friends_email=?";
+        $sql = "INSERT INTO Friends (email, friends_email)" .
+            "VALUES (?, ?)";
 
         global $db;
 
@@ -63,17 +64,16 @@ class User
     }
 
     /**
-     * Add a friend to the current user's friends.
+     * Remove a friend from the current user's friends.
      */
-    public function add_friend($email)
+    public function remove_friend($email)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
             return false;
         }
 
-        $sql = "INSERT INTO Friends (email, friends_email)" .
-            "VALUES (?, ?)";
+        $sql = "DELETE FROM Friends WHERE email=? AND friends_email=?";
 
         global $db;
 
@@ -155,6 +155,52 @@ class User
 
         $statement = $db->prepare($sql);
         $statement->bind_param("sss", $tconst, $email, $likes);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Add a title to the user's watch list. */
+    public function movie_add_rating($tconst, $watch_order)
+    {
+        $sql = "INSERT INTO UserToTitleData (email, tconst, watchOrder) VALUES (?, ?, ?)
+ON DUPLICATE KEY UPDATE UserToTitleData SET watchOrder=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        $statement->bind_param("ssii", $this->email, $tconst, $watch_order, $watch_order);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Add a title to the user's watch list. */
+    public function movie_remove_rating($tconst, $watch_order)
+    {
+        $sql = "UPDATE UserToTitleData SET watchOrder=? WHERE email=? AND tconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        $statement->bind_param("iss", $watch_order, $this->email, $tconst);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Remove a title from the user's watch list. */
+    public function movie_change_rating($tconst)
+    {
+        $sql = "UPDATE UserToTitleData SET watchOrder=NULL WHERE email=? AND tconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        $statement->bind_param("ss", $this->email, $tconst);
         $statement->execute();
         $statement->close();
 

@@ -1,8 +1,9 @@
 <?php
 
 require_once("include/db_interface.php");
-require_once("include/user.php");
 require_once("include/title.php");
+require_once("include/user.php");
+require_once("include/util.php");
 
 // Handle POST requests.
 $login_succeeded = null;
@@ -50,18 +51,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container">
         <h1 class="mt-5"><a href="<?php echo $_SERVER['PHP_SELF']; ?>">Hoo's Watching</a></h1>
 
-        <ol>
-            <?php
-            $titles = get_titles(0, 25, SORT_TITLE_USER_RATING, FILTER_TITLES_USER_RATING, 2, false);
-            foreach ($titles as $title) :
-            ?>
-                <li>
-                    <?php echo $title['primaryTitle']; ?>
-                    <?php echo $title['startYear']; ?>
-                    <?php echo json_encode($title); ?>
-                </li>
-            <?php endforeach; ?>
-        </ol>
+        <table class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <!-- tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes -->
+                    <th scope="col">Title</th>
+                    <th scope="col">Year</th>
+                    <th scope="col">Length</th>
+                    <th scope="col">IMDb rating</th>
+                    <th scope="col">HW rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $titles = get_titles(0, 25, SORT_TITLE_USER_RATING, FILTER_TITLES_USER_RATING, 2, false);
+                foreach ($titles as $title) :
+                ?>
+                    <tr>
+                        <th scope="row"><?php echo $title['primaryTitle']; ?></th>
+                        <td>
+                            <?php
+                            echo $title['startYear'];
+                            if (!is_null($title['endYear'])) {
+                                echo "-" . $title['endYear'];
+                            }
+                            ?>
+                        </td>
+                        <td><?php echo minutes_to_human_time($title['runtimeMinutes']); ?></td>
+                        <td><?php
+                            echo number_format($title['averageRating'], 1) .
+                                " (" .
+                                number_format($title['numVotes']) .
+                                " votes)";
+                            ?></td>
+                        <td>
+                            <?php
+                            if ($title['numUserVotes'] > 0) {
+                                echo number_format($title['userRating'], 1) .
+                                    " (" .
+                                    number_format($title['numUserVotes']) .
+                                    " votes)";
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
 
     <div class="container">

@@ -5,8 +5,8 @@ define("SORT_TITLES_AVERAGE_RATING", "averageRating");
 define("SORT_TITLES_NUM_VOTES", "numVotes");
 define("SORT_TITLES_NUM_STARS", "averageRating*numVotes");
 define("SORT_TITLES_YEAR", "startYear");
-define("SORT_TITLE_USER_RATING", " averageRating");
-define("SORT_TITLE_NUM_USER_RATINGS", " numVotes");
+define("SORT_TITLE_USER_RATING", "userRating {order}, averageRating");
+define("SORT_TITLE_NUM_USER_RATINGS", " numUserRatings {order}, numVotes");
 $ALL_TITLE_SORTS = array(
     SORT_TITLES_PRIMARY_TITLE,
     SORT_TITLES_AVERAGE_RATING,
@@ -62,22 +62,21 @@ function get_titles($start, $end, $sort_type = SORT_TITLES_NUM_STARS, $filter_ty
     $filter_value = mysqli_escape_string($db, $filter_value);
     $built_filter = str_replace("?", $filter_value, $filter_type);
 
-    // Default sort is number of total stars from IMDb.
-    $sql = "SELECT titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes FROM Titles ORDER BY averageRating*numVotes";
-
-    $sql = "SELECT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes FROM Titles {filter} ORDER BY {sort} {order} LIMIT {start}, {count}";
+    // Now build the sql command.
+    $sql = "SELECT DISTINCT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating,numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as numUserRatings
+    FROM Titles AS t
+{filter}
+ORDER BY {sort} {order}
+LIMIT {start}, {count}";
     if ($filter_type == FILTER_TITLES_GENRE) {
-        $sql = "SELECT DISTINCT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes FROM Titles NATURAL JOIN Genres {filter} ORDER BY {sort} {order} LIMIT {start}, {count}";
+        $sql = "SELECT DISTINCT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating,numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as numUserRatings
+FROM Titles AS t
+NATURAL JOIN Genres {filter}
+ORDER BY {sort} {order}
+LIMIT {start}, {count}";
     } else if ($filter_type == FILTER_TITLES_USER_RATING || $sort_type == SORT_TITLE_USER_RATING || $sort_type == SORT_TITLE_NUM_USER_RATINGS) {
-        $sql = "SELECT 
-    tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, userRating as averageRating, numUserVotes as numVotes
-FROM Titles
-NATURAL JOIN (
-    SELECT tconst, avg(number_of_stars) as userRating, count(tconst) as numUserVotes
-    FROM UserToTitleData
-    WHERE number_of_stars IS NOT NULL
-    GROUP BY tconst
-) AS t
+        $sql = "SELECT DISTINCT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating,numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as numUserRatings
+FROM Titles AS t
 {filter}
 ORDER BY {sort} {order}
 LIMIT {start}, {count}";
@@ -112,7 +111,9 @@ LIMIT {start}, {count}";
     $runtimeMinutes = null;
     $averageRating = null;
     $numVotes = null;
-    $statement->bind_result($tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes);
+    $userRating = null;
+    $numUserVotes = null;
+    $statement->bind_result($tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
 
     $output = array();
     while ($statement->fetch()) {
@@ -126,6 +127,8 @@ LIMIT {start}, {count}";
             "runtimeMinutes" => $runtimeMinutes,
             "averageRating" => $averageRating,
             "numVotes" => $numVotes,
+            "userRating" => $userRating,
+            "numUserVotes" => $numUserVotes,
         ));
     }
 
