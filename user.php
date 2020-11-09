@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * CS4750
+ * Hoo's Watching
+ * Jessica Heavner (jlh9qv), Julian Cornejo Castro (jac9vn), Patrick Thomas (pwt5ca), & Solimar Kwa (swk3st)
+ */
+
 require_once("include/db_interface.php");
 require_once("include/user-funcs.php");
 
@@ -19,7 +25,6 @@ if (is_null($email)) {
 $HEADER_INFO = array(
     "Hoo's Watching | " . $email,
     $title['primaryTitle'] . " <small class='text-muted'> <a href=\"./index.php\">Hoo's Watching</a></small> ",
-    "Hoo's Watching | " . $email
 );
 include("include/boilerplate/head.php");
 ?>
