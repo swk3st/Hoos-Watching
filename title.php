@@ -17,30 +17,25 @@ if (is_null($title)) {
     header("Location: ./index.php");
     die();
 }
+
+$HEADER_INFO = array(
+    "Hoo's Watching | " . $title['primaryTitle'],
+    $title['primaryTitle'] . " <small class='text-muted'> <a href=\"./index.php\">Hoo's Watching</a></small> ",
+    "Hoo's Watching | " . $title['primaryTitle']
+);
+include("include/boilerplate/head.php");
 ?>
 
-<!doctype html>
-<html lang="en">
+<div class="container">
+    <?php
+    foreach ($title as $key => $value) :
+    ?>
+        <p>
+            <b><?php echo $key; ?></b> - <?php echo $value; ?>
+        </p>
+    <?php
+    endforeach;
+    ?>
+</div>
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-
-    <title class="mt-5">Hoo's Watching | <?php echo $title['primaryTitle']; ?></title>
-</head>
-
-<body>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    <div class="container">
-        <h1><?php echo $title['primaryTitle']; ?></h1>
-
-        <p><?php echo json_encode($title); ?></p>
-    </div>
-</body>
-
-</html>
+<?php include("include/boilerplate/tail.php"); ?>
