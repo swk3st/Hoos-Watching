@@ -5,6 +5,7 @@ define("SORT_TITLES_AVERAGE_RATING", "averageRating");
 define("SORT_TITLES_NUM_VOTES", "numVotes");
 define("SORT_TITLES_NUM_STARS", "averageRating*numVotes");
 define("SORT_TITLES_YEAR", "startYear");
+define("SORT_TITLES_LENGTH", "runtimeMinutes");
 define("SORT_TITLE_USER_RATING", "userRating {order}, averageRating");
 define("SORT_TITLE_NUM_USER_RATINGS", " numUserRatings {order}, numVotes");
 $ALL_TITLE_SORTS = array(
@@ -13,6 +14,7 @@ $ALL_TITLE_SORTS = array(
     SORT_TITLES_NUM_VOTES,
     SORT_TITLES_NUM_STARS,
     SORT_TITLES_YEAR,
+    SORT_TITLES_LENGTH,
     SORT_TITLE_USER_RATING,
     SORT_TITLE_NUM_USER_RATINGS
 );
@@ -22,12 +24,14 @@ define("FILTER_TITLES_PRIMARY_TITLE", "WHERE primaryTitle LIKE \"%?%\"");
 define("FILTER_TITLES_AVG_RATING", "WHERE averageRating > ?");
 define("FILTER_TITLES_USER_RATING", " WHERE averageRating > ?");
 define("FILTER_TITLES_GENRE", "WHERE Genres.genres=\"?\"");
+define("FILTER_TITLES_TYPE", "WHERE titleType=\"?\"");
 $ALL_TITLE_FILTERS = array(
     FILTER_TITLES_NONE,
     FILTER_TITLES_PRIMARY_TITLE,
     FILTER_TITLES_AVG_RATING,
     FILTER_TITLES_USER_RATING,
     FILTER_TITLES_GENRE,
+    FILTER_TITLES_TYPE,
 );
 
 /**
@@ -113,11 +117,14 @@ LIMIT {start}, {count}";
     $numVotes = null;
     $userRating = null;
     $numUserVotes = null;
+
     $statement->bind_result($tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
+    $statement->fetch();
 
     $output = array();
     while ($statement->fetch()) {
         array_push($output, array(
+            "tconst" => $tconst,
             "titleType" => $titleType,
             "primaryTitle" => $primaryTitle,
             "originalTitle" => $originalTitle,
@@ -134,6 +141,55 @@ LIMIT {start}, {count}";
 
     $statement->close();
 
+    return $output;
+}
+
+function title_get_info($tconst)
+{
+    global $db;
+
+    $sql = "SELECT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating,numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as numUserRatings
+FROM Titles as t
+WHERE tconst=?";
+
+    // Now perform the query.
+    $statement = $db->prepare($sql);
+    $statement->bind_param("s", $tconst);
+    $statement->execute();
+
+    $tconst = null;
+    $titleType = null;
+    $primaryTitle = null;
+    $originalTitle = null;
+    $isAdult = null;
+    $startYear = null;
+    $endYear = null;
+    $runtimeMinutes = null;
+    $averageRating = null;
+    $numVotes = null;
+    $userRating = null;
+    $numUserVotes = null;
+    $statement->bind_result($tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
+
+    $statement->bind_result($tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
+    $statement->fetch();
+
+    $output = array(
+        "tconst" => $tconst,
+        "titleType" => $titleType,
+        "primaryTitle" => $primaryTitle,
+        "originalTitle" => $originalTitle,
+        "isAdult" => $isAdult,
+        "startYear" => $startYear,
+        "endYear" => $endYear,
+        "runtimeMinutes" => $runtimeMinutes,
+        "averageRating" => $averageRating,
+        "numVotes" => $numVotes,
+        "userRating" => $userRating,
+        "numUserVotes" => $numUserVotes,
+    );
+
+    $statement->close();
     return $output;
 }
 
