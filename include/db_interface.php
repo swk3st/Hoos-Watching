@@ -8,7 +8,7 @@
 
 require_once("connect.php");
 require_once("security.php");
-require_once("user.php");
+require_once("user-funcs.php");
 
 session_start();
 

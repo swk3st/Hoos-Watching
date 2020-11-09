@@ -2,7 +2,7 @@
 
 require_once("include/db_interface.php");
 require_once("include/title.php");
-require_once("include/user.php");
+require_once("include/user-funcs.php");
 require_once("include/util.php");
 
 $title = null;
@@ -12,8 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
 }
 
+// Redirect back to the home page if the title isn't valid.
 if (is_null($title)) {
-    // Redirect back to the home page.
     header("Location: ./index.php");
     die();
 }
@@ -36,6 +36,25 @@ include("include/boilerplate/head.php");
     <?php
     endforeach;
     ?>
+</div>
+
+<div class="container">
+    <h3 class='mt-5'>Comments</h3>
+
+    <?php
+    $comments = title_get_comments($title['tconst']);
+    foreach ($comments as $comment) :
+    ?>
+        <div class="media border border-rounded mt-3 p-2">
+            <img src="assets/img/noun_person_124296.png" class="mr-3" alt="Profile picture" width=64 height=64>
+            <div class="media-body">
+                <h5 class="mt-0"><?php echo $comment['email']; ?></h5>
+                <?php echo $comment['text']; ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+
+    <small class="text-muted">person by Diego Naive from the Noun Project</small>
 </div>
 
 <?php include("include/boilerplate/tail.php"); ?>

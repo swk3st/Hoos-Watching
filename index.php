@@ -1,8 +1,8 @@
 <?php
 
 require_once("include/db_interface.php");
-require_once("include/title.php");
-require_once("include/user.php");
+require_once("include/title-funcs.php");
+require_once("include/user-funcs.php");
 require_once("include/util.php");
 
 // Handle POST requests.
