@@ -10,7 +10,12 @@ require_once("db_interface.php");
 
 class User
 {
+    /** The currently logged in user's email. */
     private $email = null;
+
+    /** The currently logged in user's password. Should be fairly secure since it 
+     * is stored server-side, but it is still bad practice to store a password in 
+     * memory for longer than it needs to be. */
     private $password = null;
 
     /**
@@ -18,6 +23,12 @@ class User
      */
     public function __construct()
     {
+        // Load the user session if need be.
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+
+        // Make sure that there is a logged in user.
         if (!isset($_SESSION['email']) || !isset($_SESSION['password'])) {
             return;
         }
@@ -28,6 +39,9 @@ class User
             $this->email = $email;
             $this->password = $password;
         }
+
+        unset($email);
+        unset($password);
     }
 
     /**
@@ -62,6 +76,9 @@ class User
         global $db;
 
         $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
         $statement->bind_param("ss", $this->email, $email);
         $statement->execute();
         $statement->close();
@@ -84,6 +101,9 @@ class User
         global $db;
 
         $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
         $statement->bind_param("ss", $this->email, $email);
         $statement->execute();
         $statement->close();
@@ -106,6 +126,9 @@ class User
         global $db;
 
         $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
         $statement->bind_param("s", $this->email);
         $statement->execute();
 
@@ -138,6 +161,9 @@ class User
         global $db;
 
         $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
         $statement->bind_param("sssi", $tconst, $email, $text_cleaned, $likes);
         $statement->execute();
         $statement->close();
@@ -160,6 +186,9 @@ class User
         global $db;
 
         $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
         $statement->bind_param("sss", $tconst, $email, $likes);
         $statement->execute();
         $statement->close();
@@ -168,14 +197,21 @@ class User
     }
 
     /** Add a title to the user's watch list. */
-    public function movie_add_rating($tconst, $watch_order)
+    public function movie_add_to_watch_list($tconst, $watch_order)
     {
-        $sql = "INSERT INTO UserToTitleData (email, tconst, watchOrder) VALUES (?, ?, ?)
-ON DUPLICATE KEY UPDATE UserToTitleData SET watchOrder=?";
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "INSERT INTO UserToTitleData (email, tconst, watchOrder, date_added) VALUES (?, ?, ?, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE watchOrder=?";
 
         global $db;
 
         $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
         $statement->bind_param("ssii", $this->email, $tconst, $watch_order, $watch_order);
         $statement->execute();
         $statement->close();
@@ -184,13 +220,21 @@ ON DUPLICATE KEY UPDATE UserToTitleData SET watchOrder=?";
     }
 
     /** Add a title to the user's watch list. */
-    public function movie_remove_rating($tconst, $watch_order)
+    public function movie_change_watch_list_order($tconst, $watch_order)
     {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
         $sql = "UPDATE UserToTitleData SET watchOrder=? WHERE email=? AND tconst=?";
 
         global $db;
 
         $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
         $statement->bind_param("iss", $watch_order, $this->email, $tconst);
         $statement->execute();
         $statement->close();
@@ -199,18 +243,295 @@ ON DUPLICATE KEY UPDATE UserToTitleData SET watchOrder=?";
     }
 
     /** Remove a title from the user's watch list. */
-    public function movie_change_rating($tconst)
+    public function movie_remove_from_watch_list($tconst)
     {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
         $sql = "UPDATE UserToTitleData SET watchOrder=NULL WHERE email=? AND tconst=?";
 
         global $db;
 
         $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
         $statement->bind_param("ss", $this->email, $tconst);
         $statement->execute();
         $statement->close();
 
         return true;
+    }
+
+    /** Add a title to the user's favorites. */
+    public function movie_add_to_favorites($tconst, $favoritesRank)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "INSERT INTO UserToTitleData (email, tconst, favoritesRank) VALUES (?, ?, ?)
+ON DUPLICATE KEY UPDATE favoritesRank=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ssii", $this->email, $tconst, $favoritesRank, $favoritesRank);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Add a title to the user's favorites. */
+    public function movie_change_favorites_order($tconst, $favoritesRank)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "UPDATE UserToTitleData SET watchOrder=? WHERE email=? AND tconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("iss", $favoritesRank, $this->email, $tconst);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Remove a title from the user's favorites. */
+    public function movie_remove_from_favorites($tconst)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "UPDATE UserToTitleData SET watchOrder=NULL WHERE email=? AND tconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $tconst);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Rate a title. */
+    public function movie_add_rating($tconst, $number_of_stars)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "INSERT INTO UserToTitleData (email, tconst, number_of_stars) VALUES (?, ?, ?)
+ON DUPLICATE KEY UPDATE number_of_stars=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ssii", $this->email, $tconst, $number_of_stars, $number_of_stars);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Add a title to the user's favorites. */
+    public function movie_change_rating($tconst, $number_of_stars)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "UPDATE UserToTitleData SET watchOrder=? WHERE email=? AND tconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("iss", $number_of_stars, $this->email, $tconst);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Remove a title from the user's favorites. */
+    public function movie_remove_rating($tconst)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "UPDATE UserToTitleData SET watchOrder=NULL WHERE email=? AND tconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $tconst);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Add a user's rating to a person. */
+    public function movie_add_person_rating($nconst, $number_of_stars)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "INSERT INTO UserToPersonData (email, nconst, number_of_stars) VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE number_of_stars=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ssii", $this->email, $nconst, $number_of_stars, $number_of_stars);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Change a user's rating to a person. */
+    public function movie_change_person_rating($nconst, $number_of_stars)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "UPDATE UserToPersonData SET number_of_stars=? WHERE email=? AND nconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("iss", $number_of_stars, $this->email, $nconst);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Remove a user's rating to a person. */
+    public function movie_remove_person_rating($nconst)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "UPDATE UserToPersonData SET number_of_stars=NULL WHERE email=? AND nconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $nconst);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    public function get_watch_list()
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "SELECT watchOrder, tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) FROM UserToTitleData NATURAL JOIN Titles as t
+        WHERE email=? AND watchOrder IS NOT NULL
+        ORDER BY watchOrder ASC;";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("s", $this->email);
+        $statement->execute();
+
+        $number_of_stars = null;
+        $tconst = null;
+        $titleType = null;
+        $primaryTitle = null;
+        $originalTitle = null;
+        $isAdult = null;
+        $startYear = null;
+        $endYear = null;
+        $runtimeMinutes = null;
+        $averageRating = null;
+        $numVotes = null;
+        $userRating = null;
+        $numUserVotes = null;
+        $statement->bind_result($number_of_stars, $tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
+
+        $output = array();
+        while ($statement->fetch()) {
+            array_push($output, array(
+                "number_of_stars" => $number_of_stars,
+                "tconst" => $tconst,
+                "titleType" => $titleType,
+                "primaryTitle" => $primaryTitle,
+                "originalTitle" => $originalTitle,
+                "isAdult" => $isAdult,
+                "startYear" => $startYear,
+                "endYear" => $endYear,
+                "runtimeMinutes" => $runtimeMinutes,
+                "averageRating" => $averageRating,
+                "numVotes" => $numVotes,
+                "userRating" => $userRating,
+                "numUserVotes" => $numUserVotes,
+            ));
+        }
+
+        $statement->close();
+
+        return $output;
     }
 }
 

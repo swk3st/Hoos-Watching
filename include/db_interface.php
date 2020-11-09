@@ -10,7 +10,9 @@ require_once("connect.php");
 require_once("security.php");
 require_once("user-funcs.php");
 
-session_start();
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 /**
  * Check if a username is already used.

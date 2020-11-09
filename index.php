@@ -96,12 +96,16 @@ include("include/boilerplate/head.php");
     <p>Current user:
         <?php
         global $user;
-        if (!$user->is_logged_in()) {
-            echo "Not logged in!";
-        } else {
-            echo $user->get_email();
-        }
-        ?>
+        if (!$user->is_logged_in()) : ?>
+            Not logged in!
+        <?php else : ?>
+            <p>
+                <a href="<?php echo "./user.php?email=" . $user->get_email() ?>
+                "><?php echo $user->get_email(); ?>
+                </a>
+            </p>
+        <?php endif ?>
+
     </p>
 
     <div class="border rounded mt-3 p-3">

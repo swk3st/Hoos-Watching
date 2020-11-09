@@ -1,7 +1,7 @@
 <?php
 
 require_once("include/db_interface.php");
-require_once("include/title.php");
+require_once("include/title-funcs.php");
 require_once("include/user-funcs.php");
 require_once("include/util.php");
 
@@ -23,6 +23,10 @@ $HEADER_INFO = array(
     $title['primaryTitle'] . " <small class='text-muted'> <a href=\"./index.php\">Hoo's Watching</a></small> ",
     "Hoo's Watching | " . $title['primaryTitle']
 );
+
+
+
+
 include("include/boilerplate/head.php");
 ?>
 
@@ -54,7 +58,9 @@ include("include/boilerplate/head.php");
         </div>
     <?php endforeach; ?>
 
-    <small class="text-muted">person by Diego Naive from the Noun Project</small>
+    <?php if (sizeof($comments) > 0) : ?>
+        <small class="text-muted">person by Diego Naive from the Noun Project</small>
+    <?php endif; ?>
 </div>
 
 <?php include("include/boilerplate/tail.php"); ?>
