@@ -242,7 +242,10 @@ function title_get_comments($tconst)
 
 function title_get_people($tconst)
 {
-    $sql = "SELECT nconst, ordering, category, job, characters, primaryName, birthYear, deathYear FROM Names NATURAL JOIN PeopleToTitleData WHERE tconst=? ORDER BY ordering ASC";
+    $sql = "SELECT nconst, ordering, category, job, characters, primaryName, birthYear, deathYear, ( SELECT CONVERT(JSON_ARRAYAGG(primaryProfession) USING utf8) FROM Professions as p WHERE p.nconst = n.nconst GROUP BY n.nconst )
+    FROM Names as n NATURAL JOIN PeopleToTitleData
+    WHERE tconst=?
+    ORDER BY ordering ASC";
 
     global $db;
 
@@ -258,7 +261,8 @@ function title_get_people($tconst)
     $primaryName = null;
     $birthYear = null;
     $deathYear = null;
-    $statement->bind_result($nconst, $ordering, $category, $job, $characters, $primaryName, $birthYear, $deathYear);
+    $professions = null;
+    $statement->bind_result($nconst, $ordering, $category, $job, $characters, $primaryName, $birthYear, $deathYear, $professions);
 
     $output = array();
     while ($statement->fetch()) {
@@ -267,10 +271,11 @@ function title_get_people($tconst)
             "ordering" => $ordering,
             "category" => $category,
             "job" => $job,
-            "characters" => json_decode($characters),
+            "characters" => json_decode($characters, true),
             "primaryName" => $primaryName,
             "birthYear" => $birthYear,
-            "deathYear" => $deathYear
+            "deathYear" => $deathYear,
+            "professions" => json_decode($professions, true)
         ));
     }
 

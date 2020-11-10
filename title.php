@@ -42,10 +42,10 @@ include("include/boilerplate/head.php");
     ?>
 </div>
 
-<div class="container">
+<!-- <div class="container">
     <?php $poster = title_get_poster($title['tconst']); ?>
     <img class='w-25' src="<?php echo $poster; ?>" alt="">
-</div>
+</div> -->
 
 <div class="container">
     <h3 class="mt-5">People</h3>
