@@ -10,6 +10,7 @@ $login_succeeded = null;
 $creation_succeeded = null;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+    // Handle login form.
     if (isset($_POST['loginEmail']) && isset($_POST['loginPassword'])) {
         $login_succeeded = login_user($_POST['loginEmail'], $_POST['loginPassword']);
         if ($login_succeeded) {
@@ -19,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    // Handle user creation form.
     if (isset($_POST['createEmail']) && isset($_POST['createPassword'])) {
         if (check_user_exists($_POST['createEmail'])) {
             $creation_succeeded = false;
@@ -108,6 +110,7 @@ include("include/boilerplate/head.php");
 
     </p>
 
+    <!-- User login form -->
     <div class="border rounded mt-3 p-3">
         <h3>Log in to an account</h3>
         <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
@@ -125,6 +128,7 @@ include("include/boilerplate/head.php");
         </form>
     </div>
 
+    <!-- User creation form -->
     <div class="border rounded mt-3 p-3">
         <h3>Create an account</h3>
         <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
