@@ -330,7 +330,7 @@ ON DUPLICATE KEY UPDATE favoritesRank=?";
         return true;
     }
 
-    /** Add a title to the user's favorites. */
+    /** Change a title in the user's favorites. */
     public function movie_change_favorites_order($tconst, $favoritesRank)
     {
         // Make sure the user is logged in.
@@ -524,6 +524,124 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         }
 
         $sql = "SELECT watchOrder, tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) FROM UserToTitleData NATURAL JOIN Titles as t
+        WHERE email=? AND watchOrder IS NOT NULL
+        ORDER BY watchOrder ASC;";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("s", $this->email);
+        $statement->execute();
+
+        $watchOrder = null;
+        $tconst = null;
+        $titleType = null;
+        $primaryTitle = null;
+        $originalTitle = null;
+        $isAdult = null;
+        $startYear = null;
+        $endYear = null;
+        $runtimeMinutes = null;
+        $averageRating = null;
+        $numVotes = null;
+        $userRating = null;
+        $numUserVotes = null;
+        $statement->bind_result($watchOrder, $tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
+
+        $output = array();
+        while ($statement->fetch()) {
+            array_push($output, array(
+                "watchOrder" => $watchOrder,
+                "tconst" => $tconst,
+                "titleType" => $titleType,
+                "primaryTitle" => $primaryTitle,
+                "originalTitle" => $originalTitle,
+                "isAdult" => $isAdult,
+                "startYear" => $startYear,
+                "endYear" => $endYear,
+                "runtimeMinutes" => $runtimeMinutes,
+                "averageRating" => $averageRating,
+                "numVotes" => $numVotes,
+                "userRating" => $userRating,
+                "numUserVotes" => $numUserVotes,
+            ));
+        }
+
+        $statement->close();
+
+        return $output;
+    }
+
+    public function get_favorites_list()
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "SELECT favoritesOrder, tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) FROM UserToTitleData NATURAL JOIN Titles as t
+        WHERE email=? AND watchOrder IS NOT NULL
+        ORDER BY watchOrder ASC;";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("s", $this->email);
+        $statement->execute();
+
+        $favoritesOrder = null;
+        $tconst = null;
+        $titleType = null;
+        $primaryTitle = null;
+        $originalTitle = null;
+        $isAdult = null;
+        $startYear = null;
+        $endYear = null;
+        $runtimeMinutes = null;
+        $averageRating = null;
+        $numVotes = null;
+        $userRating = null;
+        $numUserVotes = null;
+        $statement->bind_result($favoritesOrder, $tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
+
+        $output = array();
+        while ($statement->fetch()) {
+            array_push($output, array(
+                "favoritesOrder" => $favoritesOrder,
+                "tconst" => $tconst,
+                "titleType" => $titleType,
+                "primaryTitle" => $primaryTitle,
+                "originalTitle" => $originalTitle,
+                "isAdult" => $isAdult,
+                "startYear" => $startYear,
+                "endYear" => $endYear,
+                "runtimeMinutes" => $runtimeMinutes,
+                "averageRating" => $averageRating,
+                "numVotes" => $numVotes,
+                "userRating" => $userRating,
+                "numUserVotes" => $numUserVotes,
+            ));
+        }
+
+        $statement->close();
+
+        return $output;
+    }
+
+    public function get_rated_movies()
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "SELECT number_of_stars, tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) FROM UserToTitleData NATURAL JOIN Titles as t
         WHERE email=? AND watchOrder IS NOT NULL
         ORDER BY watchOrder ASC;";
 
