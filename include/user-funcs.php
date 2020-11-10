@@ -516,6 +516,76 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         return true;
     }
 
+    /** Add a user's rating to a person. */
+    public function movie_add_person_order($nconst, $personOrder)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "INSERT INTO UserToPersonData (email, nconst, personOrder) VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE personOrder=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ssii", $this->email, $nconst, $personOrder, $personOrder);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Change a user's rating to a person. */
+    public function movie_change_person_order($nconst, $personOrder)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "UPDATE UserToPersonData SET personOrder=? WHERE email=? AND nconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("iss", $personOrder, $this->email, $nconst);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    /** Remove a user's rating to a person. */
+    public function movie_remove_person_order($nconst)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "UPDATE UserToPersonData SET personOrder=NULL WHERE email=? AND nconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $nconst);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
     public function get_watch_list()
     {
         // Make sure the user is logged in.

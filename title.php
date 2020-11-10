@@ -43,6 +43,22 @@ include("include/boilerplate/head.php");
 </div>
 
 <div class="container">
+    <?php $poster = title_get_poster($title['tconst']); ?>
+    <img class='w-25' src="<?php echo $poster; ?>" alt="">
+</div>
+
+<div class="container">
+    <h3 class="mt-5">People</h3>
+
+    <?php
+    $people = title_get_people($title['tconst']);
+    foreach ($people as $person) :
+    ?>
+        <p><?php echo json_encode($person); ?></p>
+    <?php endforeach; ?>
+</div>
+
+<div class="container">
     <h3 class='mt-5'>Comments</h3>
 
     <?php
