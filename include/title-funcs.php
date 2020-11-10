@@ -150,6 +150,12 @@ LIMIT {start}, {count}";
     return $output;
 }
 
+/**
+ * Get information about a specific title.
+ * 
+ * @param str $tconst The title identifier to get the information about.
+ * @return array
+ */
 function title_get_info($tconst)
 {
     global $db;
@@ -197,6 +203,12 @@ WHERE tconst=?";
     return $output;
 }
 
+/**
+ * Get all of the comments for a specific title.
+ * 
+ * @param $tconst str Title identifier to get comments about.
+ * @return array Array of comments, sorted by post date. Has the keys `email`, `date_added`, `text`, and `likes`.
+ */
 function title_get_comments($tconst)
 {
     $sql = "SELECT email, date_added, text, likes FROM Comment WHERE tconst=? ORDER BY date_added ASC";

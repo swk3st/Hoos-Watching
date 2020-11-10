@@ -46,12 +46,19 @@ class User
 
     /**
      * Return whether or not the current user is logged in.
+     * 
+     * @return bool True if there is a logged in user, false otherwise.
      */
     public function is_logged_in()
     {
         return !(is_null($this->email) || is_null($this->password));
     }
 
+    /**
+     * Get the email for the current user.
+     * 
+     * @return str Email of current user.
+     */
     public function get_email()
     {
         if (!$this->is_logged_in()) {
@@ -62,6 +69,9 @@ class User
 
     /**
      * Add a friend to the current user's friends.
+     * 
+     * @param str $email The email of the friend.
+     * @return bool True if the operation succeeds, otherwise false if it fails.
      */
     public function add_friend($email)
     {
@@ -88,6 +98,9 @@ class User
 
     /**
      * Remove a friend from the current user's friends.
+     * 
+     * @param str $email The email of the friend.
+     * @return bool True if the operation succeeds, otherwise false if it fails.
      */
     public function remove_friend($email)
     {
@@ -113,6 +126,8 @@ class User
 
     /**
      * Get an array of all of the user's friends.
+     * 
+     * @return bool True if the operation succeeds, otherwise false if it fails.
      */
     public function get_friends()
     {
@@ -147,6 +162,10 @@ class User
 
     /** 
      * Create a public comment on a specific title.
+     * 
+     * @param str $tconst The title identifier.
+     * @param str $text The body of the comment.
+     * @return bool True if the operation succeeds, otherwise false if it fails.
      */
     public function create_comment_on_title($tconst, $text)
     {
@@ -173,6 +192,11 @@ class User
 
     /** 
      * Create a public comment on a specific title.
+     * 
+     * @param str $tconst The title identifier.
+     * @param str $text The body of the comment.
+     * @param str $date_added The time that the comment was originally posted.
+     * @return bool True if the operation succeeds, otherwise false if it fails.
      */
     public function like_comment_on_title($tconst, $email, $date_added)
     {
@@ -189,14 +213,20 @@ class User
         if (!$statement) {
             return false;
         }
-        $statement->bind_param("sss", $tconst, $email, $likes);
+        $statement->bind_param("ssss", $tconst, $email, $likes, $date_added);
         $statement->execute();
         $statement->close();
 
         return true;
     }
 
-    /** Add a title to the user's watch list. */
+    /**
+     * Add a movie to the current user's watch list.
+     * 
+     * @param str $tconst The title identifier.
+     * @param int $watch_order The order to put the movie on the list.
+     * @return bool True if the operation succeeds, otherwise false if it fails.
+     */
     public function movie_add_to_watch_list($tconst, $watch_order)
     {
         // Make sure the user is logged in.
@@ -219,7 +249,13 @@ class User
         return true;
     }
 
-    /** Add a title to the user's watch list. */
+    /**
+     * Change the order of a title on the current user's watch list.
+     * 
+     * @param str $tconst The title identifier.
+     * @param int $watch_order The order to put the movie on the list.
+     * @return bool True if the operation succeeds, otherwise false if it fails.
+     */
     public function movie_change_watch_list_order($tconst, $watch_order)
     {
         // Make sure the user is logged in.
@@ -242,7 +278,12 @@ class User
         return true;
     }
 
-    /** Remove a title from the user's watch list. */
+    /**
+     * Remove a movie from the current user's watch list.
+     * 
+     * @param str $tconst The title identifier.
+     * @return bool True if the operation succeeds, otherwise false if it fails.
+     */
     public function movie_remove_from_watch_list($tconst)
     {
         // Make sure the user is logged in.
