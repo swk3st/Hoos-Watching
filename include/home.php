@@ -1,35 +1,27 @@
-<html> 
-  <head> 
-    <script src="jquery.js"></script> 
-    <script> 
-    $(function(){
-      $("#includedContent").load("navbar.html"); 
-    });
-    </script> 
-  </head> 
+<?php
 
-  <body> 
-  <link href="navbar.html" rel="import" />
+require_once("include/db_interface.php");
+require_once("include/title.php");
+require_once("include/user-funcs.php");
+require_once("include/util.php");
 
-    <!-- Search form -->
-    <form class="form-inline">
-      <i class="fas fa-search" aria-hidden="true"></i>
-      <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search"
-        aria-label="Search">
-    </form>
+$title = null;
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if (isset($_GET['tconst'])) {
+        $title = title_get_info($_GET['tconst']);
+    }
+}
 
-    <select class="mdb-select md-form colorful-select dropdown-primary" searchable="Search here..">
-      <option value="1"> Genre </option>
-      <option value="2"> Movie </option>
-      <option value="3"> Television Series </option>
-      <option value="4"> Actor </option>
-      <option value="5"> Average Rating </option>
-    </select>
+// Redirect back to the home page if the title isn't valid.
+if (is_null($title)) {
+    header("Location: ./index.php");
+    die();
+}
 
-    <label class="mdb-main-label">Example label</label>
-  </body> 
-
-
-</html>
-
-
+$HEADER_INFO = array(
+    "Hoo's Watching | " . $title['primaryTitle'],
+    $title['primaryTitle'] . " <small class='text-muted'> <a href=\"./index.php\">Hoo's Watching</a></small> ",
+    "Hoo's Watching | " . $title['primaryTitle']
+);
+include("include/boilerplate/head.php");
+?>
