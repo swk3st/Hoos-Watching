@@ -12,11 +12,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
 }
 
-// Redirect back to the home page if the title isn't valid.
-if (is_null($title)) {
-    header("Location: ./index.php");
-    die();
-}
 
 $HEADER_INFO = array(
     "Hoo's Watching | " . $title['primaryTitle'],
