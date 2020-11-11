@@ -50,7 +50,10 @@ include("include/boilerplate/head.php");
                     </div>
                   </div>
                 </div>
-              
+              </div>
+              <div class="card mt-3">
+              </div>
+            </div>
             <div class="col-md-8">
               <div class="card mb-3">
                 <div class="card-body">
