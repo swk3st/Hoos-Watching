@@ -51,28 +51,6 @@ include("include/boilerplate/head.php");
                             <h4>Julie L. Arsenault</h4>
                         </div>
                         <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                        <div class="mt-4">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>8471</h4>
-                                        <p class="mb-0 text-muted">Wallets Balance</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>8512</h4>
-                                        <p class="mb-0 text-muted">Income amounts</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>4751</h4>
-                                        <p class="mb-0 text-muted">Total Transactions</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -85,28 +63,6 @@ include("include/boilerplate/head.php");
                             <h4>Christopher Gallardo</h4>
                         </div>
                         <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                        <div class="mt-4">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>1021</h4>
-                                        <p class="mb-0 text-muted">Wallets Balance</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>4562</h4>
-                                        <p class="mb-0 text-muted">Income amounts</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>3621</h4>
-                                        <p class="mb-0 text-muted">Total Transactions</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -122,28 +78,6 @@ include("include/boilerplate/head.php");
                             <h4>Joseph M. Rohr</h4>
                         </div>
                         <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                        <div class="mt-4">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>7845</h4>
-                                        <p class="mb-0 text-muted">Wallets Balance</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>1254</h4>
-                                        <p class="mb-0 text-muted">Income amounts</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>5846</h4>
-                                        <p class="mb-0 text-muted">Total Transactions</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -156,28 +90,6 @@ include("include/boilerplate/head.php");
                             <h4>Mark K. Horne</h4>
                         </div>
                         <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                        <div class="mt-4">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>4851</h4>
-                                        <p class="mb-0 text-muted">Wallets Balance</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>10250</h4>
-                                        <p class="mb-0 text-muted">Income amounts</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>895</h4>
-                                        <p class="mb-0 text-muted">Total Transactions</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -190,28 +102,6 @@ include("include/boilerplate/head.php");
                             <h4>James M. Fonville</h4>
                         </div>
                         <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                        <div class="mt-4">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>4560</h4>
-                                        <p class="mb-0 text-muted">Wallets Balance</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>12350</h4>
-                                        <p class="mb-0 text-muted">Income amounts</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>742</h4>
-                                        <p class="mb-0 text-muted">Total Transactions</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -227,28 +117,6 @@ include("include/boilerplate/head.php");
                             <h4>Jade M. Walker</h4>
                         </div>
                         <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                        <div class="mt-4">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>3520</h4>
-                                        <p class="mb-0 text-muted">Wallets Balance</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>4587</h4>
-                                        <p class="mb-0 text-muted">Income amounts</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>423</h4>
-                                        <p class="mb-0 text-muted">Total Transactions</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -261,28 +129,6 @@ include("include/boilerplate/head.php");
                             <h4>Mathias L. Lassen</h4>
                         </div>
                         <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                        <div class="mt-4">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>7851</h4>
-                                        <p class="mb-0 text-muted">Wallets Balance</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>10020</h4>
-                                        <p class="mb-0 text-muted">Income amounts</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>1036</h4>
-                                        <p class="mb-0 text-muted">Total Transactions</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -295,28 +141,6 @@ include("include/boilerplate/head.php");
                             <h4>Alfred M. Bach</h4>
                         </div>
                         <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                        <div class="mt-4">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>7421</h4>
-                                        <p class="mb-0 text-muted">Wallets Balance</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>14754</h4>
-                                        <p class="mb-0 text-muted">Income amounts</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>11525</h4>
-                                        <p class="mb-0 text-muted">Total Transactions</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
