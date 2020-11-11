@@ -22,6 +22,21 @@ if (is_null($email)) {
     die();
 }
 
+// Require login?
+if (!$user->is_logged_in()) {
+    header("Location: ./require_login.php");
+    die();
+}
+
+// Grab global user; reinit as read only, publicly-viewed user if $user is not the currently viewed user's page.
+global $user;
+$current_user = null;
+if ($email != $user->get_email()) {
+    $current_user = new User($email);
+} else {
+    $current_user = $user;
+}
+
 $HEADER_INFO = array(
     "Hoo's Watching | " . $email,
     $email . " <small class='text-muted'> <a href=\"./index.php\">Hoo's Watching</a></small> ",
@@ -30,38 +45,35 @@ include("include/boilerplate/head.php");
 ?>
 
 <div class="container">
-    <h1>Viewing <?php echo $email; ?></h1>
+    <h1>Viewing <?php echo $current_user->get_email(); ?></h1>
 </div>
 
-<?php
-// Only display watch list info if the user is logged in.
-global $user;
-
-
-$user->movie_add_to_watch_list("tt0111161", 1);
-$user->movie_add_to_watch_list("tt0468569", 3);
-$user->movie_add_to_watch_list("tt1375666", 2);
-$user->movie_add_to_watch_list("tt0137523", 4);
-
-$user->movie_add_to_favorites("tt0111161", 4);
-$user->movie_add_to_favorites("tt0468569", 2);
-$user->movie_add_to_favorites("tt1375666", 1);
-$user->movie_add_to_favorites("tt0137523", 3);
-
-$user->movie_add_rating("tt0111161", 5);
-$user->movie_add_rating("tt0468569", 4);
-$user->movie_add_rating("tt1375666", 4);
-$user->movie_add_rating("tt0137523", 5);
-
-
-if ($email == $user->get_email()) :
-?>
+<?php if ($current_user->get_email() == $user->get_email()) : ?>
     <div class="container">
-        <h2>Watch List</h2>
+        <h2>Your Watch List</h2>
 
         <?php
-        global $user;
-        foreach ($user->get_watch_list() as $title) :
+        foreach ($current_user->get_watch_list() as $title) :
+        ?>
+            <p><?php echo json_encode($title); ?></p>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
+
+<div class="container">
+    <h2>Favorites</h2>
+
+    <?php foreach ($current_user->get_favorites_list() as $title) : ?>
+        <p><?php echo json_encode($title); ?></p>
+    <?php endforeach; ?>
+</div>
+
+<?php if ($current_user->get_email() == $user->get_email()) : ?>
+    <div class="container">
+        <h2>Your Rated Movies</h2>
+
+        <?php
+        foreach ($current_user->get_rated_movies() as $title) :
         ?>
             <p><?php echo json_encode($title); ?></p>
         <?php endforeach; ?>
