@@ -21,4 +21,4 @@ jobs:
           SOURCE: ./
 
           PRE_SCRIPT: ""
-          POST_SCRIPT: "chmod -R 0777 /u/lab/pwt5ca/public_html/pwt5ca/assets/img/downloaded"
+          POST_SCRIPT: "chmod 0777 /u/lab/pwt5ca/public_html/pwt5ca/assets/img/downloaded"

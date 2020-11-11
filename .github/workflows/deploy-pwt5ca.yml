@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Deploy to server; dev
+      - name: Deploy to server; pwt5ca
         uses: up9cloud/action-rsync@v1.1
         env:
           HOST: portal.cs.virginia.edu
@@ -21,4 +21,4 @@ jobs:
           SOURCE: ./
 
           PRE_SCRIPT: ""
-          POST_SCRIPT: "chmod -R 0777 /u/lab/pwt5ca/public_html/pwt5ca/assets/img/downloaded"
+          POST_SCRIPT: "chmod 0777 /u/lab/pwt5ca/public_html/pwt5ca/assets/img/downloaded"
