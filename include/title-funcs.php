@@ -6,7 +6,7 @@
  * Jessica Heavner (jlh9qv), Julian Cornejo Castro (jac9vn), Patrick Thomas (pwt5ca), & Solimar Kwa (swk3st)
  */
 
- require_once("db_interface.php");
+require_once("db_interface.php");
 
 define("SORT_TITLES_PRIMARY_TITLE", "primaryTitle");
 define("SORT_TITLES_AVERAGE_RATING", "averageRating");
@@ -308,13 +308,20 @@ function title_get_poster($tconst)
     $json_data = json_decode($response, true)['posters'];
 
     // Find the first English poster (sorry)
-    $poster = $json_data[0];
-    foreach ($json_data as $p) {
-        if ($p['language'] == "en") {
-            $poster = $p;
-            break;
+    try {
+        if (!is_array($json_data) || !isset($json_data[0])) {
+            return null;
         }
-    }
+        $poster = $json_data[0];
+        foreach ($json_data as $p) {
+            if ($p['language'] == "en") {
+                $poster = $p;
+                break;
+            }
+        }
 
-    return $poster['link'];
+        return $poster['link'];
+    } catch (\Throwable $th) {
+        return null;
+    }
 }
