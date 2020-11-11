@@ -8,16 +8,16 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="include/home.php"> Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="home.php"> Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="include/profile.php"> Profile <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="profile.php"> Profile <span class="sr-only">(current)</span></a>
               </li>
             <li class="nav-item active">
-                <a class="nav-link" href="include/watchlist.php"> Watchlist <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="watchlist.php"> Watchlist <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="include/friends.php"> My Friends  <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="friends.php"> My Friends  <span class="sr-only">(current)</span></a>
             </li>
         </div>
     </nav>
