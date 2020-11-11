@@ -199,16 +199,14 @@ class User
             return false;
         }
 
-        $sql = "INSERT INTO Comment(tconst, email, text, likes) VALUES (?, ?, ?, 0)";
+        $sql = "INSERT INTO Comment(tconst, email, date_added, text, likes) VALUES (?, ?, CURRENT_TIMESTAMP, ?, 0)";
         $text_cleaned =  htmlspecialchars($text);
 
         global $db;
 
+        $email = $this->get_email();
         $statement = $db->prepare($sql);
-        if (!$statement) {
-            return false;
-        }
-        $statement->bind_param("sssi", $tconst, $email, $text_cleaned, $likes);
+        $statement->bind_param("sss", $tconst, $email, $text_cleaned);
         $statement->execute();
         $statement->close();
 

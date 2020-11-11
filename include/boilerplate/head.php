@@ -53,3 +53,31 @@
             </p> -->
         </div>
     </div>
+
+    <?php
+    global $ERROR;
+    if (isset($ERROR)) :
+    ?>
+        <div class="container">
+            <div class="alert alert-danger" role="alert">
+                <?php echo $ERROR; ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php
+    global $MESSAGE;
+    if (isset($MESSAGE)) :
+    ?>
+        <div class="container">
+            <div class="alert alert-primary" role="alert">
+                <?php echo $MESSAGE; ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    <?php endif; ?>
