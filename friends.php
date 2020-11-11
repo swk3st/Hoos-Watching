@@ -38,29 +38,7 @@ include("include/boilerplate/head.php");
                         <div class="">
                             <h4>Freddie J. Plourde</h4>
                         </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">Message Now</button>
-                        <div class="mt-4">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>2563</h4>
-                                        <p class="mb-0 text-muted">Wallets Balance</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>6952</h4>
-                                        <p class="mb-0 text-muted">Income amounts</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>1125</h4>
-                                        <p class="mb-0 text-muted">Total Transactions</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
                     </div>
                 </div>
             </div>
@@ -72,7 +50,7 @@ include("include/boilerplate/head.php");
                         <div class="">
                             <h4>Julie L. Arsenault</h4>
                         </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">Message Now</button>
+                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
                         <div class="mt-4">
                             <div class="row">
                                 <div class="col-4">
@@ -106,7 +84,7 @@ include("include/boilerplate/head.php");
                         <div class="">
                             <h4>Christopher Gallardo</h4>
                         </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">Message Now</button>
+                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
                         <div class="mt-4">
                             <div class="row">
                                 <div class="col-4">
@@ -143,7 +121,7 @@ include("include/boilerplate/head.php");
                         <div class="">
                             <h4>Joseph M. Rohr</h4>
                         </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">Message Now</button>
+                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
                         <div class="mt-4">
                             <div class="row">
                                 <div class="col-4">
@@ -177,7 +155,7 @@ include("include/boilerplate/head.php");
                         <div class="">
                             <h4>Mark K. Horne</h4>
                         </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">Message Now</button>
+                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
                         <div class="mt-4">
                             <div class="row">
                                 <div class="col-4">
@@ -211,7 +189,7 @@ include("include/boilerplate/head.php");
                         <div class="">
                             <h4>James M. Fonville</h4>
                         </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">Message Now</button>
+                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
                         <div class="mt-4">
                             <div class="row">
                                 <div class="col-4">
@@ -248,7 +226,7 @@ include("include/boilerplate/head.php");
                         <div class="">
                             <h4>Jade M. Walker</h4>
                         </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">Message Now</button>
+                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
                         <div class="mt-4">
                             <div class="row">
                                 <div class="col-4">
@@ -282,7 +260,7 @@ include("include/boilerplate/head.php");
                         <div class="">
                             <h4>Mathias L. Lassen</h4>
                         </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">Message Now</button>
+                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
                         <div class="mt-4">
                             <div class="row">
                                 <div class="col-4">
@@ -316,7 +294,7 @@ include("include/boilerplate/head.php");
                         <div class="">
                             <h4>Alfred M. Bach</h4>
                         </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">Message Now</button>
+                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
                         <div class="mt-4">
                             <div class="row">
                                 <div class="col-4">
