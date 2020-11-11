@@ -31,8 +31,6 @@ include("include/boilerplate/head.php");
             <div class="col-lg-8 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Basic Hoverable Table</h4>
-                        <p class="card-description"> Basic Hoverable Table example </p>
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
