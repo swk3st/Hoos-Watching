@@ -18,30 +18,45 @@ class User
      * memory for longer than it needs to be. */
     private $password = null;
 
+    private $is_self = null;
+
     /**
      * Initialize the current user.
      */
-    public function __construct()
+    public function __construct($email = null)
     {
-        // Load the user session if need be.
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        if (is_null($email)) {
+            // First try to log in to the user with session variables.
 
-        // Make sure that there is a logged in user.
-        if (!isset($_SESSION['email']) || !isset($_SESSION['password'])) {
-            return;
-        }
-        $email = $_SESSION['email'];
-        $password = $_SESSION['password']; // This is a bad practice.
+            // Load the user session if need be.
+            if (!isset($_SESSION)) {
+                session_start();
+            }
 
-        if (login_user($email, $password)) {
-            $this->email = $email;
-            $this->password = $password;
-        }
+            // Make sure that there is a logged in user.
+            if (!isset($_SESSION['email']) || !isset($_SESSION['password'])) {
+                return;
+            }
+            $email = $_SESSION['email'];
+            $password = $_SESSION['password']; // This is a bad practice.
 
-        unset($email);
-        unset($password);
+            if (login_user($email, $password)) {
+                $this->email = $email;
+                $this->password = $password;
+                $this->is_self = true;
+            }
+
+            unset($email);
+            unset($password);
+        } else {
+            // Otherwise initialize based on the provided email, given that it is valid.
+            if (check_user_exists($email)) {
+                $this->email = $email;
+                $this->is_self = false;
+            } else {
+                debug_echo("User does not exist!");
+            }
+        }
     }
 
     /**
@@ -51,7 +66,17 @@ class User
      */
     public function is_logged_in()
     {
-        return !(is_null($this->email) || is_null($this->password));
+        return !(is_null($this->email) || is_null($this->password)) && $this->is_self;
+    }
+
+    /**
+     * Return whether or not the current user is initialized (provides access to getters).
+     * 
+     * @return bool True if initialized, false otherwise.
+     */
+    private function is_initialized()
+    {
+        return !is_null($this->is_self);
     }
 
     /**
@@ -61,10 +86,10 @@ class User
      */
     public function get_email()
     {
-        if (!$this->is_logged_in()) {
-            return null;
+        if (!is_null($this->email)) {
+            return $this->email;
         }
-        return $this->email;
+        return null;
     }
 
     /**
@@ -132,7 +157,7 @@ class User
     public function get_friends()
     {
         // Make sure the user is logged in.
-        if (!$this->is_logged_in()) {
+        if (!($this->is_logged_in() || $this->is_initialized())) {
             return false;
         }
 
@@ -234,7 +259,9 @@ class User
             return false;
         }
 
-        $sql = "INSERT INTO UserToTitleData (email, tconst, watchOrder, date_added) VALUES (?, ?, ?, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE watchOrder=?";
+        $sql = "INSERT INTO UserToTitleData (email, tconst, watchOrder, date_added)
+        VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+        ON DUPLICATE KEY UPDATE watchOrder=?";
 
         global $db;
 
@@ -315,7 +342,7 @@ class User
         }
 
         $sql = "INSERT INTO UserToTitleData (email, tconst, favoritesRank) VALUES (?, ?, ?)
-ON DUPLICATE KEY UPDATE favoritesRank=?";
+        ON DUPLICATE KEY UPDATE favoritesRank=?";
 
         global $db;
 
@@ -589,7 +616,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
     public function get_watch_list()
     {
         // Make sure the user is logged in.
-        if (!$this->is_logged_in()) {
+        if (!($this->is_logged_in() || $this->is_initialized())) {
             return false;
         }
 
@@ -648,13 +675,13 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
     public function get_favorites_list()
     {
         // Make sure the user is logged in.
-        if (!$this->is_logged_in()) {
+        if (!($this->is_logged_in() || $this->is_initialized())) {
             return false;
         }
 
-        $sql = "SELECT favoritesOrder, tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) FROM UserToTitleData NATURAL JOIN Titles as t
-        WHERE email=? AND watchOrder IS NOT NULL
-        ORDER BY watchOrder ASC;";
+        $sql = "SELECT favoritesRank, tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) FROM UserToTitleData NATURAL JOIN Titles as t
+        WHERE email=? AND favoritesRank IS NOT NULL
+        ORDER BY favoritesRank ASC;";
 
         global $db;
 
@@ -665,7 +692,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         $statement->bind_param("s", $this->email);
         $statement->execute();
 
-        $favoritesOrder = null;
+        $favoritesRank = null;
         $tconst = null;
         $titleType = null;
         $primaryTitle = null;
@@ -678,12 +705,12 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         $numVotes = null;
         $userRating = null;
         $numUserVotes = null;
-        $statement->bind_result($favoritesOrder, $tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
+        $statement->bind_result($favoritesRank, $tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
 
         $output = array();
         while ($statement->fetch()) {
             array_push($output, array(
-                "favoritesOrder" => $favoritesOrder,
+                "favoritesRank" => $favoritesRank,
                 "tconst" => $tconst,
                 "titleType" => $titleType,
                 "primaryTitle" => $primaryTitle,
@@ -707,13 +734,13 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
     public function get_rated_movies()
     {
         // Make sure the user is logged in.
-        if (!$this->is_logged_in()) {
+        if (!($this->is_logged_in() || $this->is_initialized())) {
             return false;
         }
 
         $sql = "SELECT number_of_stars, tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) FROM UserToTitleData NATURAL JOIN Titles as t
-        WHERE email=? AND watchOrder IS NOT NULL
-        ORDER BY watchOrder ASC;";
+        WHERE email=? AND number_of_stars IS NOT NULL
+        ORDER BY number_of_stars ASC;";
 
         global $db;
 

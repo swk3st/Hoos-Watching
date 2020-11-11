@@ -84,6 +84,9 @@ function login_user($email, $password)
 
             return true;
         }
+        debug_echo("login_user: Password check failed.");
+    } else {
+        debug_echo("login_user: Stored password was null.");
     }
     $statement->close();
     return false;
