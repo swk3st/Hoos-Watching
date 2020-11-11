@@ -6,6 +6,8 @@
  * Jessica Heavner (jlh9qv), Julian Cornejo Castro (jac9vn), Patrick Thomas (pwt5ca), & Solimar Kwa (swk3st)
  */
 
+ require_once("db_interface.php");
+
 define("SORT_TITLES_PRIMARY_TITLE", "primaryTitle");
 define("SORT_TITLES_AVERAGE_RATING", "averageRating");
 define("SORT_TITLES_NUM_VOTES", "numVotes");
