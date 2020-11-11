@@ -18,6 +18,7 @@ if (is_null($title)) {
     die();
 }
 
+
 $HEADER_INFO = array(
     "Hoo's Watching | " . $title['primaryTitle'],
     $title['primaryTitle'] . " <small class='text-muted'> <a href=\"./index.php\">Hoo's Watching</a></small> ",
