@@ -179,7 +179,6 @@ include("include/boilerplate/head.php");
                 </div>
             </form>
         <?php endif ?>
-
     </p>
 
     <!-- User login form -->

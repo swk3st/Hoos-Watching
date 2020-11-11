@@ -20,7 +20,5 @@ jobs:
           ARGS: -avzr --exclude '.git*' --exclude '.gitignore' --exclude '*.md'
           SOURCE: ./
 
-          PRE_SCRIPT: |
-            echo start at:
-            date -u --rfc-3339=ns
-          POST_SCRIPT: "echo done at: && date -u --rfc-3339=ns"
+          PRE_SCRIPT: ""
+          POST_SCRIPT: "chmod -R 0777 /u/lab/pwt5ca/public_html/pwt5ca/assets/img/downloaded"

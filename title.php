@@ -4,6 +4,7 @@ require_once("include/db_interface.php");
 require_once("include/title-funcs.php");
 require_once("include/user-funcs.php");
 require_once("include/util.php");
+require_once("include/images.php");
 
 $title = null;
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
@@ -42,10 +43,10 @@ include("include/boilerplate/head.php");
     ?>
 </div>
 
-<!-- <div class="container">
-    <?php $poster = title_get_poster($title['tconst']); ?>
+<div class="container">
+    <?php $poster = get_poster($title['tconst']); ?>
     <img class='w-25' src="<?php echo $poster; ?>" alt="">
-</div> -->
+</div>
 
 <div class="container">
     <h3 class="mt-5">People</h3>
