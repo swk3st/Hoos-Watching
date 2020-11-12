@@ -39,7 +39,8 @@ if ($email != $user->get_email()) {
 
 $HEADER_INFO = array(
     "Hoo's Watching | " . $email,
-    $email . " <small class='text-muted'> <a href=\"./index.php\">Hoo's Watching</a></small> ",
+    "Hoo's Watching",
+    $email
 );
 include("include/boilerplate/head.php");
 ?>

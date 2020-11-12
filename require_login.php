@@ -18,7 +18,8 @@ if ($user->is_logged_in()) {
 
 $HEADER_INFO = array(
     "Hoo's Watching | Login Required",
-    "<a href=\"./index.php\">Hoo's Watching</a> | Login Required",
+    "Hoo's Watching",
+    "Login Required",
 );
 include("include/boilerplate/head.php");
 ?>

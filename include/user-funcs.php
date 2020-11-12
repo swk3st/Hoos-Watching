@@ -93,6 +93,29 @@ class User
     }
 
     /**
+     * Get the account creation date for the current user.
+     * 
+     * @return str Date the account was created.
+     */
+    public function get_creation_date()
+    {
+        global $db;
+
+        $sql = "SELECT sign_up_date FROM Users WHERE email=?";
+
+        $email = $this->get_email();
+        $statement = $db->prepare($sql);
+        $statement->bind_param("s", $email);
+        $statement->execute();
+
+        $date = null;
+        $statement->bind_result($date);
+        $statement->fetch();
+        $statement->close();
+        return $date;
+    }
+
+    /**
      * Add a friend to the current user's friends.
      * 
      * @param str $email The email of the friend.
@@ -184,6 +207,32 @@ class User
 
         return $output;
     }
+    
+    public function get_friends_count()
+    {
+        // Make sure the user is logged in.
+        if (!($this->is_logged_in() || $this->is_initialized())) {
+            return null;
+        }
+
+        $sql = "SELECT count(friends_email) FROM Friends WHERE email=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return null;
+        }
+        $statement->bind_param("s", $this->email);
+        $statement->execute();
+
+        $count = null;
+        $statement->bind_result($count);
+        $statement->fetch();
+        $statement->close();
+
+        return $count;
+    }
 
     /** 
      * Create a public comment on a specific title.
@@ -243,6 +292,81 @@ class User
         return true;
     }
 
+    public function remove_comment_on_title($tconst, $date_added)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "DELETE FROM Comment WHERE email=? AND tconst=? AND date_added=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("sss", $this->email, $tconst, $date_added);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+
+    public function movie_get_next_watch_list_order()
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return null;
+        }
+
+        $sql = "SELECT max(watchOrder) FROM UserToTitleData WHERE email=?;";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return null;
+        }
+        $statement->bind_param("s", $this->email);
+        $statement->execute();
+
+        $max_order = null;
+        $statement->bind_result($max_order);
+        $statement->fetch();
+        $statement->close();
+
+        return $max_order;
+    }
+
+    public function movie_get_next_favorites_rank()
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return null;
+        }
+
+        $sql = "SELECT max(favoritesRank) FROM UserToTitleData WHERE email=?;";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return null;
+        }
+        $statement->bind_param("s", $this->email);
+        $statement->execute();
+
+        $max_order = null;
+        $statement->bind_result($max_order);
+        $statement->fetch();
+        $statement->close();
+
+        return $max_order;
+    }
+
     /**
      * Add a movie to the current user's watch list.
      * 
@@ -250,11 +374,15 @@ class User
      * @param int $watch_order The order to put the movie on the list.
      * @return bool True if the operation succeeds, otherwise false if it fails.
      */
-    public function movie_add_to_watch_list($tconst, $watch_order)
+    public function movie_add_to_watch_list($tconst, $watch_order = null)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
             return false;
+        }
+
+        if (is_null($watch_order)) {
+            $watch_order = $this->movie_get_next_favorites_rank();
         }
 
         $sql = "INSERT INTO UserToTitleData (email, tconst, watchOrder, date_added)
@@ -332,12 +460,17 @@ class User
     }
 
     /** Add a title to the user's favorites. */
-    public function movie_add_to_favorites($tconst, $favoritesRank)
+    public function movie_add_to_favorites($tconst, $favoritesRank = null)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
             return false;
         }
+
+        if (is_null($favoritesRank)) {
+            $favoritesRank = $this->movie_get_next_favorites_rank();
+        }
+
 
         $sql = "INSERT INTO UserToTitleData (email, tconst, favoritesRank) VALUES (?, ?, ?)
         ON DUPLICATE KEY UPDATE favoritesRank=?";
@@ -786,6 +919,84 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         $statement->close();
 
         return $output;
+    }
+
+    public function count_watch_list()
+    {
+        // Make sure the user is logged in.
+        if (!($this->is_logged_in() || $this->is_initialized())) {
+            return false;
+        }
+
+        $sql = "SELECT count(tconst) FROM UserToTitleData NATURAL JOIN Titles as t WHERE email=? AND watchOrder IS NOT NULL;";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("s", $this->email);
+        $statement->execute();
+
+        $count = null;
+        $statement->bind_result($count);
+        $statement->fetch();
+        $statement->close();
+
+        return $count;
+    }
+
+    public function count_favorites_list()
+    {
+        // Make sure the user is logged in.
+        if (!($this->is_logged_in() || $this->is_initialized())) {
+            return false;
+        }
+
+        $sql = "SELECT count(tconst) FROM UserToTitleData NATURAL JOIN Titles as t WHERE email=? AND favoritesRank IS NOT NULL;";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("s", $this->email);
+        $statement->execute();
+
+        $count = null;
+        $statement->bind_result($count);
+        $statement->fetch();
+        $statement->close();
+
+        return $count;
+    }
+
+    public function count_rated_movies()
+    {
+        // Make sure the user is logged in.
+        if (!($this->is_logged_in() || $this->is_initialized())) {
+            return false;
+        }
+
+        $sql = "SELECT count(tconst) FROM UserToTitleData NATURAL JOIN Titles as t WHERE email=? AND number_of_stars IS NOT NULL;";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("s", $this->email);
+        $statement->execute();
+
+        $count = null;
+        $statement->bind_result($count);
+        $statement->fetch();
+        $statement->close();
+
+        return $count;
     }
 }
 

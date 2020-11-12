@@ -14,10 +14,13 @@
                 <a class="nav-link" href="profile.php"> Profile <span class="sr-only">(current)</span></a>
               </li>
             <li class="nav-item active">
+                <a class="nav-link" href="favorites.php"> Favorites <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
                 <a class="nav-link" href="watchlist.php"> Watchlist <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="friends.php"> My Friends  <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="friends.php"> Friends  <span class="sr-only">(current)</span></a>
             </li>
         </div>
     </nav>

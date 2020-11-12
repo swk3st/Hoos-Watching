@@ -20,9 +20,9 @@ if (is_null($title)) {
 
 
 $HEADER_INFO = array(
-    "Hoo's Watching | " . $title['primaryTitle'],
-    $title['primaryTitle'] . " <small class='text-muted'> <a href=\"./index.php\">Hoo's Watching</a></small> ",
-    "Hoo's Watching | " . $title['primaryTitle']
+    "Hoo's Watching",
+    "Hoo's Watching",
+    "Home",
 );
 include("include/boilerplate/head.php");
 ?>

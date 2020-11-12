@@ -19,6 +19,8 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
     <!-- Sticky footer -->
     <link href="assets/css/footer.css" rel="stylesheet" crossorigin="anonymous">
 
@@ -37,7 +39,7 @@
     <?php
     include("navbar.php");
     ?>
-    <div class="jumbotron jumbotron-fluid">
+    <div class="jumbotron jumbotron-fluid bg-primary text-light">
         <div class="container">
             <h1 class="display-4">
                 <?php
@@ -45,12 +47,14 @@
                 echo $HEADER_INFO[1];
                 ?>
             </h1>
-            <!-- <p class="lead">All.</p>
-            <hr class="my-4">
-            <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
             <p class="lead">
-                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-            </p> -->
+                <?php
+                if (isset($HEADER_INFO[2])) {
+                    global $HEADER_INFO;
+                    echo $HEADER_INFO[2];
+                }
+                ?>
+            </p>
         </div>
     </div>
 

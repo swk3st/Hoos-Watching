@@ -43,8 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $HEADER_INFO = array(
-  "Hoo's Watching | Watchlist",
-  "Watchlist",
+  "Hoo's Watching | Favorites",
+  "Favorites",
   $current_user->get_email()
 );
 include("include/boilerplate/head.php");
@@ -76,12 +76,12 @@ include("include/boilerplate/head.php");
                 </thead>
                 <tbody>
                   <?php
-                  $titles = $current_user->get_watch_list();
+                  $titles = $current_user->get_favorites_list();
                   if (sizeof($titles) > 0) : ?>
                     <?php foreach ($titles as $title) : ?>
                       <tr>
                         <th>
-                          <?php echo $title['watchOrder']; ?>
+                          <?php echo $title['favoritesRank']; ?>
                         </th>
                         <td>
                           <a href="./title.php?tconst=<?php echo $title['tconst']; ?>">
@@ -127,13 +127,13 @@ include("include/boilerplate/head.php");
                   <?php elseif ($current_user_is_self) : ?>
                     <tr>
                       <th scope="row">
-                        Get started by adding a movie to your watchlist!
+                        Get started by adding a movie to your favorites!
                       </th>
                     </tr>
                   <?php else : ?>
                     <tr>
                       <th scope="row">
-                        This user has no movies on their watchlist yet.
+                        This user has no movies on their favorites yet.
                       </th>
                     </tr>
                   <?php endif; ?>

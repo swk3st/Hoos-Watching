@@ -1,168 +1,116 @@
 <?php
 
-require_once("include/db_interface.php");
-require_once("include/title-funcs.php");
-require_once("include/user-funcs.php");
-require_once("include/util.php");
+/**
+ * CS4750
+ * Hoo's Watching
+ * Jessica Heavner (jlh9qv), Julian Cornejo Castro (jac9vn), Patrick Thomas (pwt5ca), & Solimar Kwa (swk3st)
+ */
 
-$title = null;
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    if (isset($_GET['tconst'])) {
-        $title = title_get_info($_GET['tconst']);
+require_once("include/db_interface.php");
+require_once("include/user-funcs.php");
+
+// Grab global user; reinit as read only, publicly-viewed user if $user is not the currently viewed user's page.
+global $user;
+$current_user = null;
+if (isset($_GET['email'])) {
+    $current_user = new User($_GET['email']);
+} else if ($user->is_logged_in()) {
+    $current_user = $user;
+}
+
+// Redirect back to the home page if the index isn't valid.
+if (is_null($current_user)) {
+    header("Location: ./index.php");
+    die();
+}
+
+// Require login?
+if (!$user->is_logged_in()) {
+    header("Location: ./require_login.php");
+    die();
+}
+
+$current_user_is_self = $user->get_email() == $current_user->get_email();
+
+// Do actions
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['add_friend_email']) && $current_user_is_self) {
+        $friend_email = $_POST['add_friend_email'];
+        $user->add_friend($friend_email);
+
+        global $MESSAGE;
+        $MESSAGE = "Successfully added " . $friend_email . " as a friend!";
+    } else if (isset($_POST['remove_friend_email']) && $current_user_is_self) {
+        $friend_email = $_POST['remove_friend_email'];
+        $user->remove_friend($friend_email);
+
+        global $MESSAGE;
+        $MESSAGE = "Removed " . $friend_email . " from your friends list.";
     }
 }
 
-
 $HEADER_INFO = array(
-    "Hoo's Watching | " . $title['primaryTitle'],
-    $title['primaryTitle'] . " <small class='text-muted'> <a href=\"./index.php\">Hoo's Watching</a></small> ",
-    "Hoo's Watching | " . $title['primaryTitle']
+    "Hoo's Watching | Friends",
+    "Friends",
+    "Viewing friends of " . $current_user->get_email(),
 );
 include("include/boilerplate/head.php");
 ?>
 
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="content">
-<link rel="stylesheet" href="assets/css/friends.css">
+    <link rel="stylesheet" href="assets/css/friends.css">
     <div class="container">
-        <div class="row">
-            <div class="col-sm-4"><a href="#custom-modal" class="btn btn-custom waves-effect waves-light mb-4" data-animation="fadein" data-plugin="custommodal" data-overlayspeed="200" data-overlaycolor="#36404a"><i class="mdi mdi-plus"></i> Add Friend</a></div>
-            <!-- end col -->
-        </div>
-        <!-- end row -->
-        <div class="row">
-            <div class="col-lg-4">
-                <div class="text-center card-box">
-                    <div class="member-card pt-2 pb-2">
-                        <div class="thumb-lg member-thumb mx-auto"><img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
-                        <div class="">
-                            <h4>Freddie J. Plourde</h4>
+        <?php if ($current_user_is_self) : ?>
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+                <div class="row mb-3">
+                    <!-- Add friends form -->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="">Add a friend by email</span>
                         </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
+                        <input type="text" class="form-control" placeholder="Friend's email" aria-label="Friend's email" name="add_friend_email">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Add</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- end col -->
-            <div class="col-lg-4">
-                <div class="text-center card-box">
-                    <div class="member-card pt-2 pb-2">
-                        <div class="thumb-lg member-thumb mx-auto"><img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
-                        <div class="">
-                            <h4>Julie L. Arsenault</h4>
+            </form>
+        <?php endif; ?>
+        <?php
+        $friends = $current_user->get_friends();
+        $friends_len = sizeof($friends);
+        if ($friends_len <= 0) :
+        ?>
+            <div>Begin by adding a friend above!</div>
+        <?php else : ?>
+            <?php for ($row = 0; $row < $friends_len / 3; $row++) : ?>
+                <div class="row">
+                    <?php for ($i = $row * 3; $i < $friends_len && $i < ($row + 1) * 3; $i++) : ?>
+                        <div class="col-lg-4">
+                            <div class="card bg-light text-center card-box">
+                                <div class="member-card pt-2 pb-2">
+                                    <div class="thumb-lg member-thumb mx-auto"><img src="assets/img/noun_person_124296.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
+                                    <div class="mt-2">
+                                        <h4><?php echo $friends[$i]; ?></h4>
+                                    </div>
+                                    <!-- <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button> -->
+                                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="mt-4">
+                                        <a href="./profile.php?email=<?php echo $friends[$i]; ?>" class="btn btn-primary btn-rounded">View Profile</a>
+                                        <?php if ($current_user_is_self) : ?>
+                                            <input type="hidden" name="remove_friend_email" value="<?php echo $friends[$i]; ?>">
+                                            <button class="btn btn-danger btn-rounded" type="submit">Remove friend</button>
+                                        <?php endif; ?>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                    </div>
+                    <?php endfor; ?>
                 </div>
-            </div>
-            <!-- end col -->
-            <div class="col-lg-4">
-                <div class="text-center card-box">
-                    <div class="member-card pt-2 pb-2">
-                        <div class="thumb-lg member-thumb mx-auto"><img src="https://bootdey.com/img/Content/avatar/avatar4.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
-                        <div class="">
-                            <h4>Christopher Gallardo</h4>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                    </div>
-                </div>
-            </div>
-            <!-- end col -->
-        </div>
-        <!-- end row -->
-        <div class="row">
-            <div class="col-lg-4">
-                <div class="text-center card-box">
-                    <div class="member-card pt-2 pb-2">
-                        <div class="thumb-lg member-thumb mx-auto"><img src="https://bootdey.com/img/Content/avatar/avatar5.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
-                        <div class="">
-                            <h4>Joseph M. Rohr</h4>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                    </div>
-                </div>
-            </div>
-            <!-- end col -->
-            <div class="col-lg-4">
-                <div class="text-center card-box">
-                    <div class="member-card pt-2 pb-2">
-                        <div class="thumb-lg member-thumb mx-auto"><img src="https://bootdey.com/img/Content/avatar/avatar6.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
-                        <div class="">
-                            <h4>Mark K. Horne</h4>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                    </div>
-                </div>
-            </div>
-            <!-- end col -->
-            <div class="col-lg-4">
-                <div class="text-center card-box">
-                    <div class="member-card pt-2 pb-2">
-                        <div class="thumb-lg member-thumb mx-auto"><img src="https://bootdey.com/img/Content/avatar/avatar7.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
-                        <div class="">
-                            <h4>James M. Fonville</h4>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                    </div>
-                </div>
-            </div>
-            <!-- end col -->
-        </div>
-        <!-- end row -->
-        <div class="row">
-            <div class="col-lg-4">
-                <div class="text-center card-box">
-                    <div class="member-card pt-2 pb-2">
-                        <div class="thumb-lg member-thumb mx-auto"><img src="https://bootdey.com/img/Content/avatar/avatar6.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
-                        <div class="">
-                            <h4>Jade M. Walker</h4>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                    </div>
-                </div>
-            </div>
-            <!-- end col -->
-            <div class="col-lg-4">
-                <div class="text-center card-box">
-                    <div class="member-card pt-2 pb-2">
-                        <div class="thumb-lg member-thumb mx-auto"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
-                        <div class="">
-                            <h4>Mathias L. Lassen</h4>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                    </div>
-                </div>
-            </div>
-            <!-- end col -->
-            <div class="col-lg-4">
-                <div class="text-center card-box">
-                    <div class="member-card pt-2 pb-2">
-                        <div class="thumb-lg member-thumb mx-auto"><img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
-                        <div class="">
-                            <h4>Alfred M. Bach</h4>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">View Profile</button>
-                    </div>
-                </div>
-            </div>
-            <!-- end col -->
-        </div>
-        <!-- end row -->
-        <div class="row">
-            <div class="col-12">
-                <div class="text-right">
-                    <ul class="pagination pagination-split mt-0 float-right">
-                        <li class="page-item"><a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">«</span> <span class="sr-only">Previous</span></a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link" href="#">5</a></li>
-                        <li class="page-item"><a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span> <span class="sr-only">Next</span></a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!-- end row -->
+            <?php endfor; ?>
+        <?php endif; ?>
     </div>
     <!-- container -->
 </div>
+
+<?php include("include/boilerplate/tail.php"); ?>

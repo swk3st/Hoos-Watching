@@ -19,6 +19,7 @@ if (is_null($title)) {
     die();
 }
 
+global $user;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['commentTextArea'])) {
         global $user;
@@ -28,18 +29,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             global $MESSAGE;
             $MESSAGE = "Comment posted successfully!";
         }
+    } else if (isset($_POST['removeCommentTconst']) && isset($_POST['removeCommentEmail']) && isset($_POST['removeCommentDate']) && $_POST['removeCommentEmail'] == $user->get_email()) {
+        global $MESSAGE;
+        if ($user->remove_comment_on_title($_POST['removeCommentTconst'], $_POST['removeCommentDate'])) {
+            $MESSAGE = "Comment removed successfully.";
+        } else {
+            $MESSAGE = "Failed to delete comment.";
+        }
     }
 }
 
+
+
+
 $HEADER_INFO = array(
     "Hoo's Watching | " . $title['primaryTitle'],
-    $title['primaryTitle'] . " <small class='text-muted'> <a href=\"./index.php\">Hoo's Watching</a></small> ",
-    "Hoo's Watching | " . $title['primaryTitle']
+    "Hoo's Watching",
+    $title['primaryTitle']
 );
-
-
-
-
 include("include/boilerplate/head.php");
 ?>
 
@@ -80,16 +87,19 @@ include("include/boilerplate/head.php");
     if (sizeof($comments) > 0) : ?>
         <ul class="list-unstyled">
             <?php foreach ($comments as $comment) : ?>
-                <li class="media border border-rounded mt-3 p-2">
+                <li class="media m-3 p-3 pb-0 border rounded">
                     <img src="assets/img/noun_person_124296.png" class="mr-3" alt="Profile picture" width=64 height=64>
                     <div class="media-body">
-                        <h5 class="mt-0"><?php echo $comment['email']; ?></h5>
+                        <h5 class="mt-0"><?php echo $comment['email']; ?><small class="text-muted"> at <?php echo $comment['date_added']; ?></small></h5>
                         <p><?php echo $comment['text']; ?></p>
 
                         <?php if ($comment['email'] == $user->get_email()) : ?>
-                        <form action="" method="post">
-                        <button type="button" class="btn btn-danger btn-sm">Delete this comment</button>
-                        </form>
+                            <form action="<?php echo $_SERVER['PHP_SELF'] . "?tconst=" . $title['tconst']; ?>" method="post">
+                                <input type="hidden" name="removeCommentTconst" value="<?php echo $title['tconst']; ?>">
+                                <input type="hidden" name="removeCommentEmail" value="<?php echo $comment['email']; ?>">
+                                <input type="hidden" name="removeCommentDate" value="<?php echo $comment['date_added']; ?>">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete this comment</button>
+                            </form>
                         <?php endif; ?>
                     </div>
                 </li>

@@ -55,7 +55,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 $HEADER_INFO = array(
     "Hoo's Watching",
-    "Hoo's Watching"
+    "Hoo's Watching",
+    "Home",
 );
 include("include/boilerplate/head.php");
 ?>
@@ -68,8 +69,8 @@ include("include/boilerplate/head.php");
                 <th scope="col">Title</th>
                 <th scope="col">Year</th>
                 <th scope="col">Length</th>
-                <th scope="col">IMDb rating</th>
-                <th scope="col">HW rating</th>
+                    <th scope="col">IMDb rating (10-1)</th>
+                    <th scope="col">HW rating (5-1)</th>
             </tr>
         </thead>
         <tbody>

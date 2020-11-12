@@ -66,7 +66,7 @@ include("include/boilerplate/head.php");
                 <thead>
                   <tr>
                     <!-- tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes -->
-                    <th scope="col">#</th>
+                    <th scope="col"><i class="fa fa-star"></i></th>
                     <th scope="col">Title</th>
                     <th scope="col">Year</th>
                     <th scope="col">Length</th>
@@ -76,12 +76,13 @@ include("include/boilerplate/head.php");
                 </thead>
                 <tbody>
                   <?php
-                  $titles = $current_user->get_watch_list();
+                  $titles = $current_user->get_rated_movies();
                   if (sizeof($titles) > 0) : ?>
                     <?php foreach ($titles as $title) : ?>
                       <tr>
                         <th>
-                          <?php echo $title['watchOrder']; ?>
+                          <?php echo $title['number_of_stars']; ?>
+                          <i class="fa fa-star"></i>
                         </th>
                         <td>
                           <a href="./title.php?tconst=<?php echo $title['tconst']; ?>">
