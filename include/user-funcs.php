@@ -382,7 +382,7 @@ class User
         }
 
         if (is_null($watch_order)) {
-            $watch_order = $this->movie_get_next_favorites_rank();
+            $watch_order = $this->movie_get_next_favorites_rank() + 1;
         }
 
         $sql = "INSERT INTO UserToTitleData (email, tconst, watchOrder, date_added)
@@ -468,7 +468,7 @@ class User
         }
 
         if (is_null($favoritesRank)) {
-            $favoritesRank = $this->movie_get_next_favorites_rank();
+            $favoritesRank = $this->movie_get_next_favorites_rank() + 1;
         }
 
 
@@ -519,7 +519,7 @@ class User
             return false;
         }
 
-        $sql = "UPDATE UserToTitleData SET watchOrder=NULL WHERE email=? AND tconst=?";
+        $sql = "UPDATE UserToTitleData SET favoritesRank=NULL WHERE email=? AND tconst=?";
 
         global $db;
 
@@ -566,7 +566,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
             return false;
         }
 
-        $sql = "UPDATE UserToTitleData SET watchOrder=? WHERE email=? AND tconst=?";
+        $sql = "UPDATE UserToTitleData SET number_of_stars=? WHERE email=? AND tconst=?";
 
         global $db;
 

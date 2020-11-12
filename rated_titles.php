@@ -38,13 +38,19 @@ $current_user_is_self = $user->get_email() == $current_user->get_email();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST['remove_title_tconst'])) {
     $tconst = $_POST['remove_title_tconst'];
-    $current_user->movie_remove_from_watch_list($tconst);
+    if ($current_user->movie_remove_rating($tconst)) {
+      global $MESSAGE;
+      $MESSAGE = "Successfully removed title rating.";
+    } else {
+      global $MESSAGE;
+      $MESSAGE = "Failed to remove title rating.";
+    }
   }
 }
 
 $HEADER_INFO = array(
-  "Hoo's Watching | Watchlist",
-  "Watchlist",
+  "Hoo's Watching | Ratings",
+  "Ratings",
   $current_user->get_email()
 );
 include("include/boilerplate/head.php");
@@ -70,8 +76,8 @@ include("include/boilerplate/head.php");
                     <th scope="col">Title</th>
                     <th scope="col">Year</th>
                     <th scope="col">Length</th>
-                    <th scope="col">IMDb rating (10-1)</th>
-                    <th scope="col">HW rating (5-1)</th>
+                    <th scope="col">IMDb rating (1-10)</th>
+                    <th scope="col">HW rating (1-5)</th>
                   </tr>
                 </thead>
                 <tbody>

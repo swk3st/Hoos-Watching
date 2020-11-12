@@ -80,8 +80,8 @@ include("include/boilerplate/head.php");
                 <th scope="col">Title</th>
                 <th scope="col">Year</th>
                 <th scope="col">Length</th>
-                <th scope="col">IMDb rating (10-1)</th>
-                <th scope="col">HW rating (5-1)</th>
+                <th scope="col">IMDb rating (1-10)</th>
+                <th scope="col">HW rating (1-5)</th>
             </tr>
         </thead>
         <tbody>

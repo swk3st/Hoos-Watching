@@ -36,6 +36,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $MESSAGE = "Failed to delete comment.";
         }
+    } else if (isset($_POST['addFavoriteTconst'])) {
+        global $MESSAGE;
+        if ($user->movie_add_to_favorites($_POST['addFavoriteTconst'])) {
+            $MESSAGE = "Added title to favorites!";
+        } else {
+            $MESSAGE = "Failed to add title to favorites.";
+        }
+    } else if (isset($_POST['addWatchLaterTconst'])) {
+        global $MESSAGE;
+        if ($user->movie_add_to_watch_list($_POST['addWatchLaterTconst'])) {
+            $MESSAGE = "Added title to your watch list!";
+        } else {
+            $MESSAGE = "Failed to add title to your watch list.";
+        }
+    } else if (isset($_POST['rateTconst']) && isset($_POST['rateStars'])) {
+        global $MESSAGE;
+        if ($user->movie_add_rating($_POST['rateTconst'], (int) $_POST['rateStars'])) {
+            $MESSAGE = "Successfully rated title!";
+        } else {
+            $MESSAGE = "Failed to rate title.";
+        }
     }
 }
 
@@ -53,8 +74,35 @@ include("include/boilerplate/head.php");
 <div class="container">
     <div class="row">
         <div class="col-sm-3">
-            <?php $poster = get_poster($title['tconst']); ?>
-            <img class="w-100" src="<?php echo $poster; ?>" alt="<?php echo $title['primaryTitle']; ?> poster">
+            <div>
+                <?php $poster = get_poster($title['tconst']); ?>
+                <img class="w-100" src="<?php echo $poster; ?>" alt="<?php echo $title['primaryTitle']; ?> poster">
+            </div>
+            <div class="text-sm-center">
+                <form action="" method="post">
+                    <input type="hidden" name="addFavoriteTconst" value="<?php echo $title['tconst']; ?>">
+                    <button class="w-75 btn btn-primary btn-sm mt-2">Add to favorites</button>
+                </form>
+            </div>
+            <div class="text-sm-center">
+                <form action="" method="post">
+                    <input type="hidden" name="addWatchLaterTconst" value="<?php echo $title['tconst']; ?>">
+                    <button class="w-75 btn btn-primary btn-sm mt-2">Add to watch later</button>
+                </form>
+            </div>
+            <div class="text-sm w-100">
+                <strong class="mt-4">Rate this title</strong>
+                <form action="" method="post">
+                    <div class="btn-group w-100 mx-auto" role="group" aria-label="Star rating">
+                        <input type="hidden" name="rateTconst" value="<?php echo $title['tconst']; ?>">
+                        <button type="submit" class="btn btn-primary btn-sm" name="rateStars" value="1">1 <i class="fa fa-star"></i></button>
+                        <button type="submit" class="btn btn-primary btn-sm" name="rateStars" value="2">2 <i class="fa fa-star"></i></button>
+                        <button type="submit" class="btn btn-primary btn-sm" name="rateStars" value="3">3 <i class="fa fa-star"></i></button>
+                        <button type="submit" class="btn btn-primary btn-sm" name="rateStars" value="4">4 <i class="fa fa-star"></i></button>
+                        <button type="submit" class="btn btn-primary btn-sm" name="rateStars" value="5">5 <i class="fa fa-star"></i></button>
+                    </div>
+                </form>
+            </div>
         </div>
         <div class="col-sm-9">
             <table class="table table-striped">
@@ -102,30 +150,25 @@ include("include/boilerplate/head.php");
                     </tr>
                     <?php if ($title['numUserVotes'] > 0) : ?>
                         <tr>
-                            <th scope="row">Average Rating (HW)</th>
+                            <th scope="row">Average Rating (Hoo's Watching)</th>
                             <td><?php echo number_format($title['userRating'], 1); ?></td>
                         </tr>
                         <tr>
-                            <th scope="row">Number of Votes (HW)</th>
+                            <th scope="row">Number of Votes (Hoo's Watching)</th>
                             <td><?php echo number_format($title['numUserVotes']); ?></td>
                         </tr>
                     <?php else : ?>
                         <tr>
-                            <th scope="row">Average Rating (HW)</th>
+                            <th scope="row">Average Rating (Hoo's Watching)</th>
                             <td>Be the first to vote!</td>
                         </tr>
                         <tr>
-                            <th scope="row">Number of Votes (HW)</th>
+                            <th scope="row">Number of Votes (Hoo's Watching)</th>
                             <td>0</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
-            <?php foreach ($title as $key => $value) : ?>
-                <p>
-                    <b><?php echo $key; ?></b> - <?php echo $value; ?>
-                </p>
-            <?php endforeach; ?>
         </div>
     </div>
 </div>
@@ -133,12 +176,35 @@ include("include/boilerplate/head.php");
 <div class="container">
     <h3 class="mt-5">People</h3>
 
-    <?php
-    $people = title_get_people($title['tconst']);
-    foreach ($people as $person) :
-    ?>
-        <p><?php echo json_encode($person); ?></p>
-    <?php endforeach; ?>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Role</th>
+                <th scope="col">Characters</th>
+                <th scope="col">Age</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $people = title_get_people($title['tconst']);
+            foreach ($people as $person) :
+            ?>
+                <tr>
+                    <th><?php echo $person['primaryName'] ?></th>
+                    <td><?php echo $person['category'] ?></td>
+                    <td><?php echo $person['characters'] ? join(", ", $person['characters']) : "" ?></td>
+                    <td><?php
+                        if ($person['birthYear']) {
+                            echo (int) ($person['deathYear'] ? (int) $person['deathYear'] : 2020) - $person['birthYear'];
+                        } else {
+                            echo "";
+                        }
+                        ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 </div>
 
 <!-- Display all comments for the title. -->
@@ -153,7 +219,12 @@ include("include/boilerplate/head.php");
                 <li class="media m-3 p-3 pb-0 border rounded">
                     <img src="assets/img/noun_person_124296.png" class="mr-3" alt="Profile picture" width=64 height=64>
                     <div class="media-body">
-                        <h5 class="mt-0"><?php echo $comment['email']; ?><small class="text-muted"> at <?php echo $comment['date_added']; ?></small></h5>
+                        <h5 class="mt-0">
+                            <a href="./profile.php?email=<?php echo $comment['email']; ?>">
+                                <?php echo $comment['email']; ?>
+                            </a>
+                            <small class="text-muted"> at <?php echo $comment['date_added']; ?></small>
+                        </h5>
                         <p><?php echo $comment['text']; ?></p>
 
                         <?php if ($comment['email'] == $user->get_email()) : ?>
@@ -182,7 +253,7 @@ include("include/boilerplate/head.php");
     <!-- Add a new comment -->
     <?php global $user;
     if ($user->is_logged_in()) : ?>
-        <form class="m-3 p-3 pb-0 border rounded" action="<?php echo $_SERVER['PHP_SELF'] . "?tconst=" . $title['tconst']; ?>" method="post">
+        <form class="m-3 mb-0 p-3 pb-0 border rounded" action="<?php echo $_SERVER['PHP_SELF'] . "?tconst=" . $title['tconst']; ?>" method="post">
             <div class="form-group">
                 <b>Posting as: <?php echo $user->get_email(); ?></b>
             </div>
@@ -190,7 +261,7 @@ include("include/boilerplate/head.php");
                 <label for="commentTextArea">Comment</label>
                 <textarea class="form-control" id="commentTextArea" name="commentTextArea" rows="3"></textarea>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-0">
                 <button type="submit" class="btn btn-primary">Post comment</button>
             </div>
         </form>
