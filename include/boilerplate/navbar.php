@@ -19,6 +19,10 @@
             <li class="nav-item active">
                 <a class="nav-link" href="friends.php"> My Friends  <span class="sr-only">(current)</span></a>
             </li>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="favoritepeople.php"> My Favorite People  <span class="sr-only">(current)</span></a>
+            </li>
         </div>
     </nav>
 </section>
