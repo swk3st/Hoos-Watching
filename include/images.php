@@ -8,6 +8,10 @@ define("IMAGE_NO_POSTER", "assets/img/downloaded/no-poster.jpg");
  */
 function get_poster($tconst)
 {
+    if (is_null($tconst)) {
+        return IMAGE_NO_POSTER;
+    }
+
     $fname = $tconst . ".jpg";
     $full_path = IMAGE_DIRECTORY . $fname;
     if (!file_exists($full_path)) {

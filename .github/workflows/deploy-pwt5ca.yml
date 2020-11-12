@@ -20,5 +20,5 @@ jobs:
           ARGS: -avzr --exclude '.git*' --exclude '.gitignore' --exclude '*.md'
           SOURCE: ./
 
-          PRE_SCRIPT: ""
+          PRE_SCRIPT: "cp -v $(find /u/lab/pwt5ca/public_html -type f -name tt*.jpg) /u/lab/pwt5ca/downloaded"
           POST_SCRIPT: "chmod 0777 /u/lab/pwt5ca/public_html/pwt5ca/assets/img/downloaded"
