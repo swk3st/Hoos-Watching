@@ -20,7 +20,7 @@ if (isset($_GET['email'])) {
 
 // Redirect back to the home page if the index isn't valid.
 if (is_null($current_user)) {
-    header("Location: ./index.php");
+    header("Location: ./require_login.php");
     die();
 }
 

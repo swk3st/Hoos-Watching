@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 // Redirect back to the home page if the index isn't valid.
 if (is_null($email)) {
-    header("Location: ./index.php");
+    header("Location: ./require_login.php");
     die();
 }
 

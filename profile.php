@@ -20,14 +20,14 @@ if (isset($_GET['email'])) {
 
 // Redirect back to the home page if the index isn't valid.
 if (is_null($current_user)) {
-    header("Location: ./index.php");
-    die();
+  header("Location: ./require_login.php");
+  die();
 }
 
 // Require login?
 if (!$user->is_logged_in()) {
-    header("Location: ./require_login.php");
-    die();
+  header("Location: ./require_login.php");
+  die();
 }
 
 $current_user_is_self = $user->get_email() == $current_user->get_email();
