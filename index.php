@@ -34,6 +34,7 @@ $HEADER_INFO = array(
     "Hoo's Watching"
 );
 include("include/boilerplate/head.php");
+include("include/search.php");
 ?>
 
 <div class="container">

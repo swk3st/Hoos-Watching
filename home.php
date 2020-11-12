@@ -24,5 +24,5 @@ $HEADER_INFO = array(
     "Hoo's Watching | " . $title['primaryTitle']
 );
 include("include/boilerplate/head.php");
-include("include/search.php");
+
 ?>
