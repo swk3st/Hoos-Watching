@@ -51,20 +51,83 @@ include("include/boilerplate/head.php");
 ?>
 
 <div class="container">
-    <?php
-    foreach ($title as $key => $value) :
-    ?>
-        <p>
-            <b><?php echo $key; ?></b> - <?php echo $value; ?>
-        </p>
-    <?php
-    endforeach;
-    ?>
-</div>
-
-<div class="container">
-    <?php $poster = get_poster($title['tconst']); ?>
-    <img class='w-25' src="<?php echo $poster; ?>" alt="">
+    <div class="row">
+        <div class="col-sm-3">
+            <?php $poster = get_poster($title['tconst']); ?>
+            <img class="w-100" src="<?php echo $poster; ?>" alt="<?php echo $title['primaryTitle']; ?> poster">
+        </div>
+        <div class="col-sm-9">
+            <table class="table table-striped">
+                <!-- $tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes -->
+                <thead>
+                    <tr>
+                        <th scope="col">Type</th>
+                        <th scope="col">Movie Detail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Primary Title</th>
+                        <td><?php echo $title['primaryTitle']; ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Original Title</th>
+                        <td><?php echo $title['originalTitle']; ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Is Adult?</th>
+                        <td><?php echo $title['isAdult'] ? "yes" : "no"; ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Start Year</th>
+                        <td><?php echo $title['startYear']; ?></td>
+                    </tr>
+                    <?php if (!is_null($title['endYear'])) : ?>
+                        <tr>
+                            <th scope="row">End Year</th>
+                            <td><?php echo $title['endYear']; ?></td>
+                        </tr>
+                    <?php endif; ?>
+                    <tr>
+                        <th scope="row">Length</th>
+                        <td><?php echo minutes_to_human_time($title['runtimeMinutes']); ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Average Rating (IMDb)</th>
+                        <td><?php echo number_format($title['averageRating'], 1); ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Number of Votes (IMDb)</th>
+                        <td><?php echo number_format($title['numVotes']); ?></td>
+                    </tr>
+                    <?php if ($title['numUserVotes'] > 0) : ?>
+                        <tr>
+                            <th scope="row">Average Rating (HW)</th>
+                            <td><?php echo number_format($title['userRating'], 1); ?></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Number of Votes (HW)</th>
+                            <td><?php echo number_format($title['numUserVotes']); ?></td>
+                        </tr>
+                    <?php else : ?>
+                        <tr>
+                            <th scope="row">Average Rating (HW)</th>
+                            <td>Be the first to vote!</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Number of Votes (HW)</th>
+                            <td>0</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+            <?php foreach ($title as $key => $value) : ?>
+                <p>
+                    <b><?php echo $key; ?></b> - <?php echo $value; ?>
+                </p>
+            <?php endforeach; ?>
+        </div>
+    </div>
 </div>
 
 <div class="container">
