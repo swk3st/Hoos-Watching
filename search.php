@@ -9,9 +9,12 @@
         data-show-search-clear-button="true">
         <thead>
             <tr>
-            <th data-field="id">ID</th>
-            <th data-field="name" data-filter-control="input">Item Name</th>
-            <th data-field="price" data-filter-control="select">Item Price</th>
+            <th data-field="name" data-filter-control="input">Name</th>
+            <th data-field="price" data-filter-control="select">Type</th>
+            <th data-field="id">Year</th>
+            <th data-field="id">Length</th>
+            <th data-field="id">IMBd rating</th>
+            <th data-field="id">HW rating</th>
             </tr>
         </thead>
         </table>
