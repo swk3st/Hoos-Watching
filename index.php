@@ -22,18 +22,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Reinit the user so they are logged in.
             global $user;
             $user = new User();
+
+            global $MESSAGE;
+            $MESSAGE = "Login succeeded!";
         } else {
-            debug_echo("Failed to login.");
+            global $MESSAGE;
+            $MESSAGE = "Login failed! Incorrect username or password.";
         }
     }
 
     // Handle user creation form.
     if (isset($_POST['createEmail']) && isset($_POST['createPassword'])) {
         if (check_user_exists($_POST['createEmail'])) {
-            $creation_succeeded = false;
+            global $MESSAGE;
+            $MESSAGE = "Account creation failed: user already exists.";
         } else {
             create_new_user($_POST['createEmail'], $_POST['createPassword']);
-            $creation_succeeded = check_user_exists($_POST['createEmail']);
+            if (check_user_exists($_POST['createEmail'])) {
+                global $MESSAGE;
+                $MESSAGE = "User creation succeeded! Now log in below.";
+            } else {
+                global $MESSAGE;
+                $MESSAGE = "Account creation failed.";
+            }
         }
     }
 
@@ -69,8 +80,8 @@ include("include/boilerplate/head.php");
                 <th scope="col">Title</th>
                 <th scope="col">Year</th>
                 <th scope="col">Length</th>
-                    <th scope="col">IMDb rating (10-1)</th>
-                    <th scope="col">HW rating (5-1)</th>
+                <th scope="col">IMDb rating (10-1)</th>
+                <th scope="col">HW rating (5-1)</th>
             </tr>
         </thead>
         <tbody>
