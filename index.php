@@ -37,6 +37,7 @@ include("include/boilerplate/head.php");
 include("search.php");
 ?>
 
+
 <div class="container">
     <table class="table table-striped table-sm">
         <thead>
