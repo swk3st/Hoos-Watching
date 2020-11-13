@@ -10,8 +10,7 @@ require_once("db_interface.php");
 
 function name_get_info($nconst)
 {
-    $sql = "SELECT primaryName, birthYear, deathYear FROM Names
-    WHERE nconst=?";
+    $sql = "SELECT primaryName, birthYear, deathYear FROM Names WHERE nconst=?";
 
     global $db;
 
@@ -39,23 +38,28 @@ function name_get_info($nconst)
 
 function name_get_roles($nconst)
 {
-    $sql = "SELECT tconst, category, job, characters, ( SELECT CONVERT(JSON_ARRAYAGG(primaryProfession) USING utf8) FROM Professions as p WHERE p.nconst = n.nconst GROUP BY n.nconst )
-    FROM Names as n NATURAL JOIN PeopleToTitleData
-    WHERE nconst=?
-    ORDER BY ordering ASC";
+    $sql = "SELECT tconst, category, job, characters, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes FROM PeopleToTitleData NATURAL JOIN Titles WHERE nconst=? ORDER BY startYear ASC";
 
     global $db;
 
     $statement = $db->prepare($sql);
     $statement->bind_param("s", $nconst);
     $statement->execute();
-
+    
     $tconst = null;
     $category = null;
     $job = null;
     $characters = null;
-    $professions = null;
-    $statement->bind_result($tconst, $category, $job, $characters, $professions);
+    $titleType = null;
+    $primaryTitle = null;
+    $originalTitle = null;
+    $isAdult = null;
+    $startYear = null;
+    $endYear = null;
+    $runtimeMinutes = null;
+    $averageRating = null;
+    $numVotes = null;
+    $statement->bind_result($tconst, $category, $job, $characters, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes);
 
     $output = array();
     while ($statement->fetch()) {
@@ -64,7 +68,15 @@ function name_get_roles($nconst)
             "category" => $category,
             "job" => $job,
             "characters" => json_decode($characters, true),
-            "professions" => json_decode($professions, true)
+            "titleType" => $titleType,
+            "primaryTitle" => $primaryTitle,
+            "originalTitle" => $originalTitle,
+            "isAdult" => $isAdult,
+            "startYear" => $startYear,
+            "endYear" => $endYear,
+            "runtimeMinutes" => $runtimeMinutes,
+            "averageRating" => $averageRating,
+            "numVotes" => $numVotes,
         ));
     }
 

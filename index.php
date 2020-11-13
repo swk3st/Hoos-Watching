@@ -127,6 +127,8 @@ include("include/boilerplate/head.php");
     </table>
 </div>
 
+<?php
+/*
 <div class="container">
     <h2>User</h2>
     <p>Current user:
@@ -186,5 +188,7 @@ include("include/boilerplate/head.php");
         </form>
     </div>
 </div>
+*/
+?>
 
 <?php include("include/boilerplate/tail.php"); ?>

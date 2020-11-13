@@ -125,19 +125,19 @@ include("include/boilerplate/head.php");
                     </form>
                 <?php endif ?>
             </div>
-            <div class="text-sm w-100">
+            <div class="text-sm w-100 mt-4">
                 <strong class="mt-4">Rate this title</strong>
                 <form action="" method="post">
                     <div class="btn-group w-100 mx-auto" role="group" aria-label="Star rating">
-                        <input type="hidden" name="rateTconst" value="<?php echo $title['tconst']; ?>">
                         <?php global $user; ?>
                         <?php $rating = $user->movie_get_rating($title['tconst']); ?>
                         <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 1 ? "active" : ""; ?>" name="rateStars" value="1">1 <i class="fa fa-star"></i></button>
+                        <input type="hidden" name="rateTconst" value="<?php echo $title['tconst']; ?>">
                         <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 2 ? "active" : ""; ?>" name="rateStars" value="2">2 <i class="fa fa-star"></i></button>
                         <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 3 ? "active" : ""; ?>" name="rateStars" value="3">3 <i class="fa fa-star"></i></button>
                         <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 4 ? "active" : ""; ?>" name="rateStars" value="4">4 <i class="fa fa-star"></i></button>
                         <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 5 ? "active" : ""; ?>" name="rateStars" value="5">5 <i class="fa fa-star"></i></button>
-                        <?php if (!is_null($rating)) : ?>
+                        <?php if ($rating) : ?>
                             <button type="submit" class="btn btn-danger btn-sm" name="removeRatingTconst" value="<?php echo $title['tconst']; ?>"><i class="fa fa-times"></i></button>
                         <?php endif; ?>
                     </div>
@@ -231,7 +231,7 @@ include("include/boilerplate/head.php");
             foreach ($people as $person) :
             ?>
                 <tr>
-                    <th><?php echo $person['primaryName'] ?></th>
+                    <th><a href="./people.php?nconst=<?php echo $person['nconst'] ?>"><?php echo $person['primaryName'] ?></a></th>
                     <td><?php echo $person['category'] ?></td>
                     <td><?php echo $person['characters'] ? join(", ", $person['characters']) : "" ?></td>
                     <td><?php

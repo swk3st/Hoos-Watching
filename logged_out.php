@@ -9,23 +9,25 @@
 require_once("include/db_interface.php");
 require_once("include/user-funcs.php");
 
-global $user;
-// Redirect back to the home page if the user is actually logged in.
-if ($user->is_logged_in()) {
-    header("Location: ./index.php");
-    die();
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Handle logout request.
+    if (isset($_POST['logout']) && $_POST['logout'] == "1") {
+        session_unset();
+        global $user;
+        $user = new User();
+    }
 }
 
 $HEADER_INFO = array(
-    "Hoo's Watching | Login Required",
+    "Hoo's Watching | Logged out",
     "Hoo's Watching",
-    "Login Required",
+    "Logged Out",
 );
 include("include/boilerplate/head.php");
 ?>
 
 <div class="container">
-    <h3>You need to be logged in to see this content.</h3>
+    <h3>You have been logged out.</h3>
     <p>You can <a href="./sign_in.php">log in here</a>, or you can <a href="./sign_up.php">make an account here.</a></p>
 </div>
 

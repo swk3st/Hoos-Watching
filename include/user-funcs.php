@@ -207,7 +207,7 @@ class User
 
         return $output;
     }
-    
+
     public function get_friends_count()
     {
         // Make sure the user is logged in.
@@ -234,7 +234,7 @@ class User
         return $count;
     }
 
-    public function add_favorite_person($nconst, $order=null)
+    public function add_favorite_person($nconst, $order = null)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
@@ -286,20 +286,20 @@ class User
     public function get_favorite_people()
     {
         $sql = "SELECT nconst, primaryName, birthYear, deathYear, ( SELECT CONVERT(JSON_ARRAYAGG(primaryProfession) USING utf8) FROM Professions as p WHERE p.nconst = n.nconst GROUP BY n.nconst ) FROM Names as n NATURAL JOIN UserToPersonData WHERE email=?";
-    
+
         global $db;
-    
+
         $statement = $db->prepare($sql);
         $statement->bind_param("s", $this->email);
         $statement->execute();
-    
+
         $nconst = null;
         $primaryName = null;
         $birthYear = null;
         $deathYear = null;
         $professions = null;
         $statement->bind_result($nconst, $primaryName, $birthYear, $deathYear, $professions);
-    
+
         $output = array();
         while ($statement->fetch()) {
             array_push($output, array(
@@ -310,12 +310,12 @@ class User
                 "professions" => json_decode($professions, true)
             ));
         }
-    
+
         $statement->close();
-    
+
         return $output;
     }
-    
+
     public function get_favorite_person_count()
     {
         // Make sure the user is logged in.
@@ -334,6 +334,56 @@ class User
         $statement->bind_param("s", $this->email);
         $statement->execute();
 
+        $count = null;
+        $statement->bind_result($count);
+        $statement->fetch();
+        $statement->close();
+
+        return $count;
+    }
+
+    public function is_favorite_person($nconst)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "SELECT count(*) FROM UserToPersonData WHERE email=? AND nconst=? AND personOrder IS NOT NULL";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $nconst);
+        $statement->execute();
+        $count = null;
+        $statement->bind_result($count);
+        $statement->fetch();
+        $statement->close();
+
+        return ($count > 0);
+    }
+
+    public function get_favorite_person_stars($nconst)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "SELECT number_of_stars FROM UserToPersonData WHERE email=? AND nconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $nconst);
+        $statement->execute();
         $count = null;
         $statement->bind_result($count);
         $statement->fetch();

@@ -26,10 +26,26 @@
         <li class="nav-item active">
           <a class="nav-link" href="favoritepeople.php"> Favorite People <span class="sr-only">(current)</span></a>
         </li>
-        <form class="ml-auto form-inline">
-          <a class="btn btn-primary mr-3" href="./sign_in.php">Log In</a>
-          <a class="btn btn-primary" href="./sign_up.php">Sign Up</a>
-        </form>
+        <?php global $user;
+        if (!$user->is_logged_in()) : ?>
+          <form class="ml-auto form-inline">
+            <a class="btn btn-primary btn-sm mr-3" href="./sign_in.php">Log In</a>
+            <a class="btn btn-primary btn-sm" href="./sign_up.php">Sign Up</a>
+          </form>
+        <?php else : ?>
+          <form action="logged_out.php" method="post" class="ml-auto form-inline">
+            <div class="input-group input-group-sm">
+              <div class="input-group-prepend">
+                <a class="input-group-text" id="inputGroup-sizing-sm" href="./profile.php?email=<?php echo $user->get_email(); ?>">
+                  Logged in as <?php echo $user->get_email(); ?>
+                </a>
+              </div>
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary" type="button" name="logout" value="1">Log out</button>
+              </div>
+            </div>
+          </form>
+        <?php endif; ?>
     </div>
   </nav>
 </section>
