@@ -18,11 +18,11 @@ if (is_null($title)) {
     die();
 }
 
-
 $HEADER_INFO = array(
     "Hoo's Watching",
     "Hoo's Watching",
     "Home",
 );
 include("include/boilerplate/head.php");
+
 ?>
