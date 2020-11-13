@@ -63,10 +63,10 @@
 
         </table>
         </div>
-        <!-- <script>
+        <script>
         $(function() {
             $('#table').bootstrapTable()
         })
-        </script> -->
+        </script>
 
 </html>
