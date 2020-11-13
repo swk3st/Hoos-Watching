@@ -60,9 +60,9 @@
                 </tr>
             <?php endforeach; ?>
         </tbody>
-
         </table>
         </div>
+
         <script>
         $(function() {
             $('#table').bootstrapTable()
