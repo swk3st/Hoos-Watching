@@ -43,6 +43,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $MESSAGE = "Failed to add title to favorites.";
         }
+    } else if (isset($_POST['removeFavoriteTconst'])) {
+        global $MESSAGE;
+        if ($user->movie_remove_from_favorites($_POST['removeFavoriteTconst'])) {
+            $MESSAGE = "Removed title from favorites!";
+        } else {
+            $MESSAGE = "Failed to remove title from favorites.";
+        }
     } else if (isset($_POST['addWatchLaterTconst'])) {
         global $MESSAGE;
         if ($user->movie_add_to_watch_list($_POST['addWatchLaterTconst'])) {
@@ -50,12 +57,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $MESSAGE = "Failed to add title to your watch list.";
         }
+    } else if (isset($_POST['removeWatchLaterTconst'])) {
+        global $MESSAGE;
+        if ($user->movie_remove_from_watch_list($_POST['removeWatchLaterTconst'])) {
+            $MESSAGE = "Removed title from your watch list!";
+        } else {
+            $MESSAGE = "Failed to from title from your watch list.";
+        }
     } else if (isset($_POST['rateTconst']) && isset($_POST['rateStars'])) {
         global $MESSAGE;
         if ($user->movie_add_rating($_POST['rateTconst'], (int) $_POST['rateStars'])) {
             $MESSAGE = "Successfully rated title!";
         } else {
             $MESSAGE = "Failed to rate title.";
+        }
+    } else if (isset($_POST['removeRatingTconst'])) {
+        global $MESSAGE;
+        if ($user->movie_remove_rating($_POST['removeRatingTconst'])) {
+            $MESSAGE = "Successfully removed rating for title!";
+        } else {
+            $MESSAGE = "Failed to remove rating for title.";
         }
     }
 }
@@ -79,27 +100,48 @@ include("include/boilerplate/head.php");
                 <img class="w-100" src="<?php echo $poster; ?>" alt="<?php echo $title['primaryTitle']; ?> poster">
             </div>
             <div class="text-sm-center">
-                <form action="" method="post">
-                    <input type="hidden" name="addFavoriteTconst" value="<?php echo $title['tconst']; ?>">
-                    <button class="w-75 btn btn-primary btn-sm mt-2">Add to favorites</button>
-                </form>
+                <?php global $user;
+                if ($user->movie_is_favorite($title['tconst'])) : ?>
+                    <form action="" method="post">
+                        <input type="hidden" name="removeFavoriteTconst" value="<?php echo $title['tconst']; ?>">
+                        <button class="w-75 btn btn-danger btn-sm mt-2">Remove from favorites</button>
+                    </form>
+                <?php else : ?>
+                    <form action="" method="post">
+                        <input type="hidden" name="addFavoriteTconst" value="<?php echo $title['tconst']; ?>">
+                        <button class="w-75 btn btn-primary btn-sm mt-2">Add to favorites</button>
+                    </form>
+                <?php endif ?>
             </div>
             <div class="text-sm-center">
-                <form action="" method="post">
-                    <input type="hidden" name="addWatchLaterTconst" value="<?php echo $title['tconst']; ?>">
-                    <button class="w-75 btn btn-primary btn-sm mt-2">Add to watch later</button>
-                </form>
+                <?php global $user;
+                if ($user->movie_is_on_watch_list($title['tconst'])) : ?>
+                    <form action="" method="post">
+                        <input type="hidden" name="removeWatchLaterTconst" value="<?php echo $title['tconst']; ?>">
+                        <button class="w-75 btn btn-danger btn-sm mt-2">Remove from watch list</button>
+                    </form>
+                <?php else : ?>
+                    <form action="" method="post">
+                        <input type="hidden" name="addWatchLaterTconst" value="<?php echo $title['tconst']; ?>">
+                        <button class="w-75 btn btn-primary btn-sm mt-2">Add to watch list</button>
+                    </form>
+                <?php endif ?>
             </div>
             <div class="text-sm w-100">
                 <strong class="mt-4">Rate this title</strong>
                 <form action="" method="post">
                     <div class="btn-group w-100 mx-auto" role="group" aria-label="Star rating">
                         <input type="hidden" name="rateTconst" value="<?php echo $title['tconst']; ?>">
-                        <button type="submit" class="btn btn-primary btn-sm" name="rateStars" value="1">1 <i class="fa fa-star"></i></button>
-                        <button type="submit" class="btn btn-primary btn-sm" name="rateStars" value="2">2 <i class="fa fa-star"></i></button>
-                        <button type="submit" class="btn btn-primary btn-sm" name="rateStars" value="3">3 <i class="fa fa-star"></i></button>
-                        <button type="submit" class="btn btn-primary btn-sm" name="rateStars" value="4">4 <i class="fa fa-star"></i></button>
-                        <button type="submit" class="btn btn-primary btn-sm" name="rateStars" value="5">5 <i class="fa fa-star"></i></button>
+                        <?php global $user; ?>
+                        <?php $rating = $user->movie_get_rating($title['tconst']); ?>
+                        <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 1 ? "active" : ""; ?>" name="rateStars" value="1">1 <i class="fa fa-star"></i></button>
+                        <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 2 ? "active" : ""; ?>" name="rateStars" value="2">2 <i class="fa fa-star"></i></button>
+                        <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 3 ? "active" : ""; ?>" name="rateStars" value="3">3 <i class="fa fa-star"></i></button>
+                        <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 4 ? "active" : ""; ?>" name="rateStars" value="4">4 <i class="fa fa-star"></i></button>
+                        <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 5 ? "active" : ""; ?>" name="rateStars" value="5">5 <i class="fa fa-star"></i></button>
+                        <?php if (!is_null($rating)) : ?>
+                            <button type="submit" class="btn btn-danger btn-sm" name="removeRatingTconst" value="<?php echo $title['tconst']; ?>"><i class="fa fa-times"></i></button>
+                        <?php endif; ?>
                     </div>
                 </form>
             </div>
@@ -254,11 +296,12 @@ include("include/boilerplate/head.php");
     <?php global $user;
     if ($user->is_logged_in()) : ?>
         <form class="m-3 mb-0 p-3 pb-0 border rounded" action="<?php echo $_SERVER['PHP_SELF'] . "?tconst=" . $title['tconst']; ?>" method="post">
+            <h3>Post a Comment</h3>
             <div class="form-group">
                 <b>Posting as: <?php echo $user->get_email(); ?></b>
             </div>
             <div class="form-group">
-                <label for="commentTextArea">Comment</label>
+                <!-- <label for="commentTextArea">Comment</label> -->
                 <textarea class="form-control" id="commentTextArea" name="commentTextArea" rows="3"></textarea>
             </div>
             <div class="form-group mb-0">

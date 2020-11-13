@@ -234,6 +234,37 @@ class User
         return $count;
     }
 
+    /**
+     * Add a friend to the current user's friends.
+     * 
+     * @param str $email The email of the friend.
+     * @return bool True if the operation succeeds, otherwise false if it fails.
+     */
+    public function is_friend($email)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "SELECT count(*) FROM Friends WHERE email=? AND friend_email=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $email);
+        $statement->execute();
+        $count = null;
+        $statement->bind_result($count);
+        $statement->fetch();
+        $statement->close();
+
+        return ($count > 0);
+    }
+
     /** 
      * Create a public comment on a specific title.
      * 
@@ -341,6 +372,31 @@ class User
         return $max_order;
     }
 
+    public function movie_is_on_watch_list($tconst)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return null;
+        }
+
+        $sql = "SELECT count(*) FROM UserToTitleData WHERE email=? AND tconst=? AND watchOrder IS NOT NULL;";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $tconst);
+        $statement->execute();
+        $count = null;
+        $statement->bind_result($count);
+        $statement->fetch();
+        $statement->close();
+
+        return ($count > 0);
+    }
+
     public function movie_get_next_favorites_rank()
     {
         // Make sure the user is logged in.
@@ -365,6 +421,31 @@ class User
         $statement->close();
 
         return $max_order;
+    }
+
+    public function movie_is_favorite($tconst)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return null;
+        }
+
+        $sql = "SELECT count(*) FROM UserToTitleData WHERE email=? AND tconst=? AND favoritesRank IS NOT NULL;";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $tconst);
+        $statement->execute();
+        $count = null;
+        $statement->bind_result($count);
+        $statement->fetch();
+        $statement->close();
+
+        return ($count > 0);
     }
 
     /**
@@ -589,7 +670,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
             return false;
         }
 
-        $sql = "UPDATE UserToTitleData SET watchOrder=NULL WHERE email=? AND tconst=?";
+        $sql = "UPDATE UserToTitleData SET number_of_stars=NULL WHERE email=? AND tconst=?";
 
         global $db;
 
@@ -997,6 +1078,31 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         $statement->close();
 
         return $count;
+    }
+
+    public function movie_get_rating($tconst)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return null;
+        }
+
+        $sql = "SELECT number_of_stars FROM UserToTitleData WHERE email=? AND tconst=?;";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $tconst);
+        $statement->execute();
+        $number_of_stars = null;
+        $statement->bind_result($number_of_stars);
+        $statement->fetch();
+        $statement->close();
+
+        return $number_of_stars;
     }
 }
 
