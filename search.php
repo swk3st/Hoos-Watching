@@ -12,10 +12,10 @@
         <thead>
             <tr>
             <th data-field="name" data-filter-control="input">Name</th>
-            <th data-field="price" data-filter-control="select">Type</th>
+            <!-- <th data-field="price" data-filter-control="select">Type</th>
             <th data-field="id">Year</th>
             <th data-field="id">Length</th>
-            <th data-field="id">IMDb rating</th>
+            <th data-field="id">IMDb rating</th> -->
             <!-- <th data-field="id">HW rating</th> -->
             </tr>
         </thead>
