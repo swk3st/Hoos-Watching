@@ -13,7 +13,7 @@
             <th data-field="price" data-filter-control="select">Type</th>
             <th data-field="id">Year</th>
             <th data-field="id">Length</th>
-            <th data-field="id">IMBd rating</th>
+            <th data-field="id">IMDb rating</th>
             <th data-field="id">HW rating</th>
             </tr>
         </thead>
