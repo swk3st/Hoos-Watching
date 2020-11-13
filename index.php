@@ -34,8 +34,62 @@ $HEADER_INFO = array(
     "Hoo's Watching"
 );
 include("include/boilerplate/head.php");
-include("search.php");
 ?>
+
+<div class="container">
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <!-- tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes -->
+                <th scope="col">Title</th>
+                <th scope="col">Year</th>
+                <th scope="col">Length</th>
+                <th scope="col">IMDb rating</th>
+                <th scope="col">HW rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $titles = get_titles(0, 25, SORT_TITLES_NUM_STARS, FILTER_TITLES_NONE, null, false);
+            foreach ($titles as $title) :
+            ?>
+                <tr>
+                    <th scope="row">
+                        <a href="./title.php?tconst=<?php echo $title['tconst']; ?>">
+                            <?php echo $title['primaryTitle']; ?>
+                        </a>
+                        <small class="text-muted"><?php echo $title['titleType']; ?></small>
+                    </th>
+                    <td>
+                        <?php
+                        echo $title['startYear'];
+                        if (!is_null($title['endYear'])) {
+                            echo "-" . $title['endYear'];
+                        }
+                        ?>
+                    </td>
+                    <td><?php echo minutes_to_human_time($title['runtimeMinutes']); ?></td>
+                    <td><?php
+                        echo number_format($title['averageRating'], 1) .
+                            " (" .
+                            number_format($title['numVotes']) .
+                            " votes)";
+                        ?></td>
+                    <td>
+                        <?php
+                        if ($title['numUserVotes'] > 0) {
+                            echo number_format($title['userRating'], 1) .
+                                " (" .
+                                number_format($title['numUserVotes']) .
+                                " votes)";
+                        }
+                        ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 
 <div class="container">
     <h2>User</h2>
