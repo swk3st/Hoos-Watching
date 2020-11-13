@@ -82,8 +82,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 
-
-
 $HEADER_INFO = array(
     "Hoo's Watching | " . $title['primaryTitle'],
     "Hoo's Watching",

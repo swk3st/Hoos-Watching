@@ -234,6 +234,114 @@ class User
         return $count;
     }
 
+    public function add_favorite_person($nconst, $order=null)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        if (is_null($order)) {
+            $order = $this->get_favorite_person_count() + 1;
+        }
+
+        $sql = "INSERT INTO UserToPersonData (email, nconst, personOrder)" .
+            "VALUES (?, ?, ?)";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ssi", $this->email, $nconst, $order);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    public function remove_favorite_person($nconst)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "UPDATE UserToPersonData SET personOrder=NULL WHERE email=? AND nconst=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $nconst);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    public function get_favorite_people()
+    {
+        $sql = "SELECT nconst, primaryName, birthYear, deathYear, ( SELECT CONVERT(JSON_ARRAYAGG(primaryProfession) USING utf8) FROM Professions as p WHERE p.nconst = n.nconst GROUP BY n.nconst ) FROM Names as n NATURAL JOIN UserToPersonData WHERE email=?";
+    
+        global $db;
+    
+        $statement = $db->prepare($sql);
+        $statement->bind_param("s", $this->email);
+        $statement->execute();
+    
+        $nconst = null;
+        $primaryName = null;
+        $birthYear = null;
+        $deathYear = null;
+        $professions = null;
+        $statement->bind_result($nconst, $primaryName, $birthYear, $deathYear, $professions);
+    
+        $output = array();
+        while ($statement->fetch()) {
+            array_push($output, array(
+                "nconst" => $nconst,
+                "primaryName" => $primaryName,
+                "birthYear" => $birthYear,
+                "deathYear" => $deathYear,
+                "professions" => json_decode($professions, true)
+            ));
+        }
+    
+        $statement->close();
+    
+        return $output;
+    }
+    
+    public function get_favorite_person_count()
+    {
+        // Make sure the user is logged in.
+        if (!($this->is_logged_in() || $this->is_initialized())) {
+            return null;
+        }
+
+        $sql = "SELECT count(*) FROM UserToPersonData WHERE email=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return null;
+        }
+        $statement->bind_param("s", $this->email);
+        $statement->execute();
+
+        $count = null;
+        $statement->bind_result($count);
+        $statement->fetch();
+        $statement->close();
+
+        return $count;
+    }
+
     /**
      * Add a friend to the current user's friends.
      * 

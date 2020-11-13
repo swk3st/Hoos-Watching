@@ -56,13 +56,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    if (isset($_GET['page'])) {
-        if ((int) $_GET['page'] >= 0) {
-            $current_page = (int) $_GET['page'];
-        }
+// if ($_SERVER["REQUEST_METHOD"] == "GET") {
+if (isset($_GET['page'])) {
+    if ((int) $_GET['page'] >= 0) {
+        $current_page = (int) $_GET['page'];
     }
 }
+// }
 
 $HEADER_INFO = array(
     "Hoo's Watching",
