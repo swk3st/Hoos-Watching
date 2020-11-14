@@ -75,7 +75,7 @@ include("include/boilerplate/head.php");
                 <?php
                 global $user;
                 global $nconst;
-                if ($user->is_favorite_person($nconst)) :
+                if ($user->name_is_favorite($nconst)) :
                 ?>
                     <form action="" method="post">
                         <input type="hidden" name="removeFavoriteNconst" value="<?php echo $nconst; ?>">
@@ -93,7 +93,7 @@ include("include/boilerplate/head.php");
                 <form action="" method="post">
                     <div class="btn-group w-100 mx-auto" role="group" aria-label="Star rating">
                         <?php global $user; ?>
-                        <?php $rating = $user->get_favorite_person_stars($nconst); ?>
+                        <?php $rating = $user->name_get_rating($nconst); ?>
                         <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 1 ? "active" : ""; ?>" name="rateStars" value="1">1 <i class="fa fa-star"></i></button>
                         <input type="hidden" name="rateNconst" value="<?php echo $nconst; ?>">
                         <button type="submit" class="btn btn-primary btn-sm <?php echo $rating == 2 ? "active" : ""; ?>" name="rateStars" value="2">2 <i class="fa fa-star"></i></button>

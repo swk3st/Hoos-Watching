@@ -54,7 +54,7 @@ include("include/boilerplate/head.php");
         <h2>Your Watch List</h2>
 
         <?php
-        foreach ($current_user->get_watch_list() as $title) :
+        foreach ($current_user->movie_get_watch_list() as $title) :
         ?>
             <p><?php echo json_encode($title); ?></p>
         <?php endforeach; ?>
@@ -64,7 +64,7 @@ include("include/boilerplate/head.php");
 <div class="container">
     <h2>Favorites</h2>
 
-    <?php foreach ($current_user->get_favorites_list() as $title) : ?>
+    <?php foreach ($current_user->movie_get_favorites() as $title) : ?>
         <p><?php echo json_encode($title); ?></p>
     <?php endforeach; ?>
 </div>
@@ -74,7 +74,7 @@ include("include/boilerplate/head.php");
         <h2>Your Rated Movies</h2>
 
         <?php
-        foreach ($current_user->get_rated_movies() as $title) :
+        foreach ($current_user->movie_get_rated() as $title) :
         ?>
             <p><?php echo json_encode($title); ?></p>
         <?php endforeach; ?>

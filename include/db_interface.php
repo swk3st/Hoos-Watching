@@ -19,11 +19,11 @@ if (!isset($_SESSION)) {
  */
 function check_user_exists($email)
 {
-    global $db;
+    global $db_users;
 
     $sql = "SELECT count(*) FROM Users WHERE email=?";
 
-    $statement = $db->prepare($sql);
+    $statement = $db_users->prepare($sql);
     $statement->bind_param("s", $email);
     $results = $statement->execute();
     $user_exists = 0;
@@ -41,11 +41,11 @@ function check_user_exists($email)
  */
 function check_password_valid($password)
 {
-    global $db;
+    global $db_users;
 
     $sql = "CALL check_password(?);";
 
-    $statement = $db->prepare($sql);
+    $statement = $db_users->prepare($sql);
     $statement->bind_param("s", $password);
     $results = $statement->execute();
     $password_valid = null;
@@ -60,7 +60,7 @@ function check_password_valid($password)
  */
 function create_new_user($email, $password)
 {
-    global $db;
+    global $db_users;
 
     // First check if the user already exists.
     if (check_user_exists($email)) {
@@ -75,7 +75,7 @@ function create_new_user($email, $password)
     $password_hashed = movie_password_hash($password);
     $sql = "INSERT INTO Users (email, password) VALUES (?, ?)";
 
-    $statement = $db->prepare($sql);
+    $statement = $db_users->prepare($sql);
 
     $statement->bind_param("ss", $email, $password_hashed);
     $statement->execute();
@@ -89,11 +89,11 @@ function create_new_user($email, $password)
  */
 function login_user($email, $password)
 {
-    global $db;
+    global $db_users;
 
     $sql = "SELECT password FROM pwt5ca.Users WHERE email=?";
 
-    $statement = $db->prepare($sql);
+    $statement = $db_users->prepare($sql);
     $statement->bind_param("s", $email);
     $statement->execute();
 

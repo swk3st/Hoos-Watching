@@ -55,7 +55,7 @@ include("include/boilerplate/head.php");
                       <!-- <p class="text-secondary mb-1">Full Stack Developer</p>
                       <p class="text-muted font-size-sm">Bay Area, San Francisco, CA</p> -->
                       <form action="./friends.php" method="post">
-                        <input type="hidden" name="add_friend_email" value="<?php $current_user->get_email() ?>">
+                        <input type="hidden" name="friends_add_email" value="<?php $current_user->get_email() ?>">
                         <button class="btn btn-primary mt-4" <?php echo $current_user_is_self ? "disabled" : "" ?>>Add as friend</button>
                       </form>
                       <!-- <button class="btn btn-outline-primary">Message</button> -->
@@ -92,7 +92,7 @@ include("include/boilerplate/head.php");
                       <h6 class="mb-0">Number of friends</h6>
                     </div>
                     <div class="col-sm-6 text-secondary">
-                      <?php echo $current_user->get_friends_count(); ?>
+                      <?php echo $current_user->friends_get_count(); ?>
                     </div>
                     <div class="col-sm-3 text-secondary text-md-right">
                       <a href="./friends.php?email=<?php echo $current_user->get_email(); ?>">View friends</a>
@@ -104,7 +104,7 @@ include("include/boilerplate/head.php");
                       <h6 class="mb-0">Favorited movies</h6>
                     </div>
                     <div class="col-sm-6 text-secondary">
-                      <?php echo $current_user->count_favorites_list(); ?>
+                      <?php echo $current_user->movie_count_favorites(); ?>
                     </div>
                     <div class="col-sm-3 text-secondary text-md-right">
                       <a href="./favorites.php?email=<?php echo $current_user->get_email(); ?>">View favorites</a>
@@ -116,7 +116,7 @@ include("include/boilerplate/head.php");
                       <h6 class="mb-0">Movies on watch list</h6>
                     </div>
                     <div class="col-sm-6 text-secondary">
-                      <?php echo $current_user->count_watch_list(); ?>
+                      <?php echo $current_user->movie_count_watch_list(); ?>
                     </div>
                     <div class="col-sm-3 text-secondary text-md-right">
                       <a href="./watchlist.php?email=<?php echo $current_user->get_email(); ?>">View watchlist</a>
@@ -128,7 +128,7 @@ include("include/boilerplate/head.php");
                       <h6 class="mb-0">Rated movies</h6>
                     </div>
                     <div class="col-sm-6 text-secondary">
-                    <?php echo $current_user->count_rated_movies(); ?>
+                    <?php echo $current_user->movie_count_rated(); ?>
                     </div>
                     <div class="col-sm-3 text-secondary text-md-right">
                       <a href="./rated_titles.php?email=<?php echo $current_user->get_email(); ?>">View rated movies</a>
@@ -140,7 +140,7 @@ include("include/boilerplate/head.php");
                       <h6 class="mb-0">Favorited people</h6>
                     </div>
                     <div class="col-sm-6 text-secondary">
-                    <?php echo $current_user->count(); ?>
+                    <?php echo $current_user->name_get_favorites_count(); ?>
                     </div>
                     <div class="col-sm-3 text-secondary text-md-right">
                       <a href="./rated_titles.php?email=<?php echo $current_user->get_email(); ?>">View rated movies</a>

@@ -99,12 +99,12 @@ class User
      */
     public function get_creation_date()
     {
-        global $db;
+        global $db_users;
 
         $sql = "SELECT sign_up_date FROM Users WHERE email=?";
 
         $email = $this->get_email();
-        $statement = $db->prepare($sql);
+        $statement = $db_users->prepare($sql);
         $statement->bind_param("s", $email);
         $statement->execute();
 
@@ -121,7 +121,7 @@ class User
      * @param str $email The email of the friend.
      * @return bool True if the operation succeeds, otherwise false if it fails.
      */
-    public function add_friend($email)
+    public function friends_add($email)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
@@ -150,7 +150,7 @@ class User
      * @param str $email The email of the friend.
      * @return bool True if the operation succeeds, otherwise false if it fails.
      */
-    public function remove_friend($email)
+    public function friends_remove($email)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
@@ -177,7 +177,7 @@ class User
      * 
      * @return bool True if the operation succeeds, otherwise false if it fails.
      */
-    public function get_friends()
+    public function friends_get_all()
     {
         // Make sure the user is logged in.
         if (!($this->is_logged_in() || $this->is_initialized())) {
@@ -208,7 +208,7 @@ class User
         return $output;
     }
 
-    public function get_friends_count()
+    public function friends_get_count()
     {
         // Make sure the user is logged in.
         if (!($this->is_logged_in() || $this->is_initialized())) {
@@ -234,6 +234,37 @@ class User
         return $count;
     }
 
+    /**
+     * Add a friend to the current user's friends.
+     * 
+     * @param str $email The email of the friend.
+     * @return bool True if the operation succeeds, otherwise false if it fails.
+     */
+    public function is_friend($email)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "SELECT count(*) FROM Friends WHERE email=? AND friend_email=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $email);
+        $statement->execute();
+        $count = null;
+        $statement->bind_result($count);
+        $statement->fetch();
+        $statement->close();
+
+        return ($count > 0);
+    }
+
     public function name_add_favorite($nconst, $order = null)
     {
         // Make sure the user is logged in.
@@ -242,7 +273,7 @@ class User
         }
 
         if (is_null($order)) {
-            $order = $this->get_favorite_person_count() + 1;
+            $order = $this->name_get_favorites_count() + 1;
         }
 
         $sql = "INSERT INTO UserToPersonData (email, nconst, personOrder) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE personOrder=?";
@@ -326,7 +357,7 @@ class User
         return true;
     }
 
-    public function get_favorite_people()
+    public function name_get_favorites()
     {
         $sql = "SELECT nconst, primaryName, birthYear, deathYear, ( SELECT CONVERT(JSON_ARRAYAGG(primaryProfession) USING utf8) FROM Professions as p WHERE p.nconst = n.nconst GROUP BY n.nconst ) FROM Names as n NATURAL JOIN UserToPersonData WHERE email=?";
 
@@ -359,7 +390,7 @@ class User
         return $output;
     }
 
-    public function get_favorite_person_count()
+    public function name_get_favorites_count()
     {
         // Make sure the user is logged in.
         if (!($this->is_logged_in() || $this->is_initialized())) {
@@ -385,7 +416,7 @@ class User
         return $count;
     }
 
-    public function is_favorite_person($nconst)
+    public function name_is_favorite($nconst)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
@@ -410,7 +441,7 @@ class User
         return ($count > 0);
     }
 
-    public function get_favorite_person_stars($nconst)
+    public function name_get_rating($nconst)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
@@ -435,37 +466,6 @@ class User
         return $count;
     }
 
-    /**
-     * Add a friend to the current user's friends.
-     * 
-     * @param str $email The email of the friend.
-     * @return bool True if the operation succeeds, otherwise false if it fails.
-     */
-    public function is_friend($email)
-    {
-        // Make sure the user is logged in.
-        if (!$this->is_logged_in()) {
-            return false;
-        }
-
-        $sql = "SELECT count(*) FROM Friends WHERE email=? AND friend_email=?";
-
-        global $db;
-
-        $statement = $db->prepare($sql);
-        if (!$statement) {
-            return false;
-        }
-        $statement->bind_param("ss", $this->email, $email);
-        $statement->execute();
-        $count = null;
-        $statement->bind_result($count);
-        $statement->fetch();
-        $statement->close();
-
-        return ($count > 0);
-    }
-
     /** 
      * Create a public comment on a specific title.
      * 
@@ -473,7 +473,7 @@ class User
      * @param str $text The body of the comment.
      * @return bool True if the operation succeeds, otherwise false if it fails.
      */
-    public function create_comment_on_title($tconst, $text)
+    public function movie_create_comment($tconst, $text)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
@@ -517,7 +517,7 @@ class User
         if (!$statement) {
             return false;
         }
-        $statement->bind_param("ssss", $tconst, $email, $likes, $date_added);
+        $statement->bind_param("sss", $tconst, $email, $date_added);
         $statement->execute();
         $statement->close();
 
@@ -1026,7 +1026,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         return true;
     }
 
-    public function get_watch_list()
+    public function movie_get_watch_list()
     {
         // Make sure the user is logged in.
         if (!($this->is_logged_in() || $this->is_initialized())) {
@@ -1087,7 +1087,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         return $output;
     }
 
-    public function get_favorites_list()
+    public function movie_get_favorites()
     {
         // Make sure the user is logged in.
         if (!($this->is_logged_in() || $this->is_initialized())) {
@@ -1148,7 +1148,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         return $output;
     }
 
-    public function get_rated_movies()
+    public function movie_get_rated()
     {
         // Make sure the user is logged in.
         if (!($this->is_logged_in() || $this->is_initialized())) {
@@ -1207,7 +1207,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         return $output;
     }
 
-    public function count_watch_list()
+    public function movie_count_watch_list()
     {
         // Make sure the user is logged in.
         if (!($this->is_logged_in() || $this->is_initialized())) {
@@ -1233,7 +1233,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         return $count;
     }
 
-    public function count_favorites_list()
+    public function movie_count_favorites()
     {
         // Make sure the user is logged in.
         if (!($this->is_logged_in() || $this->is_initialized())) {
@@ -1259,7 +1259,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         return $count;
     }
 
-    public function count_rated_movies()
+    public function movie_count_rated()
     {
         // Make sure the user is logged in.
         if (!($this->is_logged_in() || $this->is_initialized())) {

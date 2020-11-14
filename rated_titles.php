@@ -82,7 +82,7 @@ include("include/boilerplate/head.php");
                 </thead>
                 <tbody>
                   <?php
-                  $titles = $current_user->get_rated_movies();
+                  $titles = $current_user->movie_get_rated();
                   if (sizeof($titles) > 0) : ?>
                     <?php foreach ($titles as $title) : ?>
                       <tr>

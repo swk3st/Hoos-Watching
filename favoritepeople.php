@@ -34,15 +34,15 @@ $current_user_is_self = $user->get_email() == $current_user->get_email();
 
 // // Do actions
 // if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//     if (isset($_POST['add_friend_email']) && $current_user_is_self) {
-//         $friend_email = $_POST['add_friend_email'];
-//         $user->add_friend($friend_email);
+//     if (isset($_POST['friends_add_email']) && $current_user_is_self) {
+//         $friend_email = $_POST['friends_add_email'];
+//         $user->friends_add($friend_email);
 
 //         global $MESSAGE;
 //         $MESSAGE = "Successfully added " . $friend_email . " as a friend!";
-//     } else if (isset($_POST['remove_friend_email']) && $current_user_is_self) {
-//         $friend_email = $_POST['remove_friend_email'];
-//         $user->remove_friend($friend_email);
+//     } else if (isset($_POST['friends_remove_email']) && $current_user_is_self) {
+//         $friend_email = $_POST['friends_remove_email'];
+//         $user->friends_remove($friend_email);
 
 //         global $MESSAGE;
 //         $MESSAGE = "Removed " . $friend_email . " from your friends list.";
@@ -70,7 +70,7 @@ include("include/boilerplate/head.php");
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="">Add a friend by email</span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Friend's email" aria-label="Friend's email" name="add_friend_email">
+                        <input type="text" class="form-control" placeholder="Friend's email" aria-label="Friend's email" name="friends_add_email">
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="submit">Add</button>
                         </div>
@@ -80,7 +80,7 @@ include("include/boilerplate/head.php");
         <?php endif; ?>
         */ ?>
         <?php
-        $people = $current_user->get_favorite_people();
+        $people = $current_user->name_get_favorites();
         $people_len = sizeof($people);
         if ($people_len <= 0) :
         ?>

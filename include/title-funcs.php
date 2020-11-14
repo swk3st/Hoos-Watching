@@ -75,7 +75,7 @@ function get_titles($start, $end, $sort_type = SORT_TITLES_NUM_STARS, $filter_ty
     $built_filter = str_replace("?", $filter_value, $filter_type);
 
     // Now build the sql command.
-    $sql = "SELECT DISTINCT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating,numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as numUserRatings
+    $sql = "SELECT DISTINCT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as numUserRatings
     FROM Titles AS t
 {filter}
 ORDER BY {sort} {order}
@@ -324,4 +324,22 @@ function title_get_poster($tconst)
     } catch (\Throwable $th) {
         return null;
     }
+}
+
+function title_get_genres($tconst)
+{
+    $sql = "SELECT CONVERT(JSON_ARRAYAGG(Genres) USING utf8) FROM Titles NATURAL JOIN Genres WHERE tconst=?";
+
+    global $db;
+
+    $statement = $db->prepare($sql);
+    $statement->bind_param("s", $tconst);
+    $statement->execute();
+
+    $genres = null;
+    $statement->bind_result($genres);
+    $statement->fetch();
+    $statement->close();
+
+    return json_decode($genres, true);
 }

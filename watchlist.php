@@ -82,7 +82,7 @@ include("include/boilerplate/head.php");
                 </thead>
                 <tbody>
                   <?php
-                  $titles = $current_user->get_watch_list();
+                  $titles = $current_user->movie_get_watch_list();
                   if (sizeof($titles) > 0) : ?>
                     <?php foreach ($titles as $title) : ?>
                       <tr>

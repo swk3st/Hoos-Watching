@@ -23,7 +23,7 @@ global $user;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['commentTextArea'])) {
         global $user;
-        if (!$user->create_comment_on_title($title['tconst'], $_POST['commentTextArea'])) {
+        if (!$user->movie_create_comment($title['tconst'], $_POST['commentTextArea'])) {
             debug_echo("Create comment failed.");
         } else {
             global $MESSAGE;
@@ -161,6 +161,10 @@ include("include/boilerplate/head.php");
                     <tr>
                         <th scope="row">Original Title</th>
                         <td><?php echo $title['originalTitle']; ?></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Genres</th>
+                        <td><?php echo join(", ", title_get_genres($title['tconst'])); ?></td>
                     </tr>
                     <tr>
                         <th scope="row">Is Adult?</th>
