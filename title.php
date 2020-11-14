@@ -78,6 +78,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $MESSAGE = "Failed to remove rating for title.";
         }
+    } else if (isset($_POST['likeCommentTconst']) && isset($_POST['likeCommentEmail']) && isset($_POST['likeCommentDate'])) {
+        global $MESSAGE;
+        if ($user->like_comment_on_title($_POST['likeCommentTconst'], $_POST['likeCommentEmail'], $_POST['likeCommentDate'])) {
+            $MESSAGE = "Successfully liked comment on title!";
+        } else {
+            $MESSAGE = "Failed to liked comment on title.";
+        }
     }
 }
 
@@ -263,11 +270,24 @@ include("include/boilerplate/head.php");
                 <li class="media m-3 p-3 pb-0 border rounded">
                     <img src="assets/img/noun_person_124296.png" class="mr-3" alt="Profile picture" width=64 height=64>
                     <div class="media-body">
-                        <h5 class="mt-0">
-                            <a href="./profile.php?email=<?php echo $comment['email']; ?>">
-                                <?php echo $comment['email']; ?>
-                            </a>
-                            <small class="text-muted"> at <?php echo $comment['date_added']; ?></small>
+                        <h5 class="mt-0 d-flex justify-content-between">
+                            <div>
+                                <a href="./profile.php?email=<?php echo $comment['email']; ?>">
+                                    <?php echo $comment['email']; ?>
+                                </a>
+                                <small class="text-muted"> at <?php echo $comment['date_added']; ?></small>
+                            </div>
+                            <div>
+                                <form action="<?php echo $_SERVER['PHP_SELF'] . "?tconst=" . $title['tconst']; ?>" method="post">
+                                    <input type="hidden" name="likeCommentTconst" value="<?php echo $title['tconst']; ?>">
+                                    <input type="hidden" name="likeCommentEmail" value="<?php echo $comment['email']; ?>">
+                                    <input type="hidden" name="likeCommentDate" value="<?php echo $comment['date_added']; ?>">
+                                    <button type="submit" class="close">
+                                        <small><?php echo $comment['likes']; ?></small>
+                                        <i class="fa fa-thumbs-up"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </h5>
                         <p><?php echo $comment['text']; ?></p>
 
