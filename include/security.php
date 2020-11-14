@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * CS4750
+ * Hoo's Watching
+ * Jessica Heavner (jlh9qv), Julian Cornejo Castro (jac9vn), Patrick Thomas (pwt5ca), & Solimar Kwa (swk3st)
+ */
+
 define("HASH_ALGO", "sha512"); // Use SHA256 for hashing -- not entirely strong.
 
 /**

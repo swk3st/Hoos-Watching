@@ -1,21 +1,29 @@
 <?php
 
+/**
+ * CS4750
+ * Hoo's Watching
+ * Jessica Heavner (jlh9qv), Julian Cornejo Castro (jac9vn), Patrick Thomas (pwt5ca), & Solimar Kwa (swk3st)
+ */
+
 require_once("connect.php");
 require_once("security.php");
-require_once("user.php");
+require_once("user-funcs.php");
 
-session_start();
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 /**
  * Check if a username is already used.
  */
 function check_user_exists($email)
 {
-    global $db;
+    global $db_users;
 
     $sql = "SELECT count(*) FROM Users WHERE email=?";
 
-    $statement = $db->prepare($sql);
+    $statement = $db_users->prepare($sql);
     $statement->bind_param("s", $email);
     $results = $statement->execute();
     $user_exists = 0;
@@ -29,21 +37,45 @@ function check_user_exists($email)
 }
 
 /**
+ * Check if a password is valid.
+ */
+function check_password_valid($password)
+{
+    global $db_users;
+
+    $sql = "CALL check_password(?);";
+
+    $statement = $db_users->prepare($sql);
+    $statement->bind_param("s", $password);
+    $results = $statement->execute();
+    $password_valid = null;
+    $statement->bind_result($password_valid);
+    $statement->fetch();
+    $statement->close();
+    return $password_valid;
+}
+
+/**
  * Create a new user given an email and a password.
  */
 function create_new_user($email, $password)
 {
-    global $db;
+    global $db_users;
 
     // First check if the user already exists.
     if (check_user_exists($email)) {
         return false;
     }
 
+    // Now check if the password is valid.
+    if (!check_password_valid($password)) {
+        return false;
+    }
+
     $password_hashed = movie_password_hash($password);
     $sql = "INSERT INTO Users (email, password) VALUES (?, ?)";
 
-    $statement = $db->prepare($sql);
+    $statement = $db_users->prepare($sql);
 
     $statement->bind_param("ss", $email, $password_hashed);
     $statement->execute();
@@ -57,11 +89,11 @@ function create_new_user($email, $password)
  */
 function login_user($email, $password)
 {
-    global $db;
+    global $db_users;
 
     $sql = "SELECT password FROM pwt5ca.Users WHERE email=?";
 
-    $statement = $db->prepare($sql);
+    $statement = $db_users->prepare($sql);
     $statement->bind_param("s", $email);
     $statement->execute();
 
@@ -76,6 +108,9 @@ function login_user($email, $password)
 
             return true;
         }
+        debug_echo("login_user: Password check failed.");
+    } else {
+        debug_echo("login_user: Stored password was null.");
     }
     $statement->close();
     return false;

@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Deploy to server; dev
+      - name: Deploy to server; pwt5ca
         uses: up9cloud/action-rsync@v1.1
         env:
           HOST: portal.cs.virginia.edu
@@ -20,7 +20,5 @@ jobs:
           ARGS: -avzr --exclude '.git*' --exclude '.gitignore' --exclude '*.md'
           SOURCE: ./
 
-          PRE_SCRIPT: |
-            echo start at:
-            date -u --rfc-3339=ns
-          POST_SCRIPT: "echo done at: && date -u --rfc-3339=ns"
+          PRE_SCRIPT: "cp -v $(find /u/lab/pwt5ca/public_html -type f -name tt*.jpg) /u/lab/pwt5ca/downloaded"
+          POST_SCRIPT: "chmod 0777 /u/lab/pwt5ca/public_html/pwt5ca/assets/img/downloaded"

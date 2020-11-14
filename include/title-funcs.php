@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * CS4750
+ * Hoo's Watching
+ * Jessica Heavner (jlh9qv), Julian Cornejo Castro (jac9vn), Patrick Thomas (pwt5ca), & Solimar Kwa (swk3st)
+ */
+
+require_once("db_interface.php");
+
 define("SORT_TITLES_PRIMARY_TITLE", "primaryTitle");
 define("SORT_TITLES_AVERAGE_RATING", "averageRating");
 define("SORT_TITLES_NUM_VOTES", "numVotes");
@@ -67,7 +75,7 @@ function get_titles($start, $end, $sort_type = SORT_TITLES_NUM_STARS, $filter_ty
     $built_filter = str_replace("?", $filter_value, $filter_type);
 
     // Now build the sql command.
-    $sql = "SELECT DISTINCT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating,numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as numUserRatings
+    $sql = "SELECT DISTINCT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as numUserRatings
     FROM Titles AS t
 {filter}
 ORDER BY {sort} {order}
@@ -144,11 +152,17 @@ LIMIT {start}, {count}";
     return $output;
 }
 
+/**
+ * Get information about a specific title.
+ * 
+ * @param str $tconst The title identifier to get the information about.
+ * @return array
+ */
 function title_get_info($tconst)
 {
     global $db;
 
-    $sql = "SELECT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating,numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as numUserRatings
+    $sql = "SELECT tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, averageRating, numVotes, (SELECT avg(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as userRating, (SELECT count(number_of_stars) FROM UserToTitleData as ut WHERE ut.tconst = t.tconst) as numUserRatings
 FROM Titles as t
 WHERE tconst=?";
 
@@ -169,8 +183,6 @@ WHERE tconst=?";
     $numVotes = null;
     $userRating = null;
     $numUserVotes = null;
-    $statement->bind_result($tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
-
     $statement->bind_result($tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
     $statement->fetch();
 
@@ -193,6 +205,12 @@ WHERE tconst=?";
     return $output;
 }
 
+/**
+ * Get all of the comments for a specific title.
+ * 
+ * @param $tconst str Title identifier to get comments about.
+ * @return array Array of comments, sorted by post date. Has the keys `email`, `date_added`, `text`, and `likes`.
+ */
 function title_get_comments($tconst)
 {
     $sql = "SELECT email, date_added, text, likes FROM Comment WHERE tconst=? ORDER BY date_added ASC";
@@ -222,4 +240,106 @@ function title_get_comments($tconst)
     $statement->close();
 
     return $output;
+}
+
+function title_get_people($tconst)
+{
+    $sql = "SELECT nconst, ordering, category, job, characters, primaryName, birthYear, deathYear, ( SELECT CONVERT(JSON_ARRAYAGG(primaryProfession) USING utf8) FROM Professions as p WHERE p.nconst = n.nconst GROUP BY n.nconst )
+    FROM Names as n NATURAL JOIN PeopleToTitleData
+    WHERE tconst=?
+    ORDER BY ordering ASC";
+
+    global $db;
+
+    $statement = $db->prepare($sql);
+    $statement->bind_param("s", $tconst);
+    $statement->execute();
+
+    $nconst = null;
+    $ordering = null;
+    $category = null;
+    $job = null;
+    $characters = null;
+    $primaryName = null;
+    $birthYear = null;
+    $deathYear = null;
+    $professions = null;
+    $statement->bind_result($nconst, $ordering, $category, $job, $characters, $primaryName, $birthYear, $deathYear, $professions);
+
+    $output = array();
+    while ($statement->fetch()) {
+        array_push($output, array(
+            "nconst" => $nconst,
+            "ordering" => $ordering,
+            "category" => $category,
+            "job" => $job,
+            "characters" => json_decode($characters, true),
+            "primaryName" => $primaryName,
+            "birthYear" => $birthYear,
+            "deathYear" => $deathYear,
+            "professions" => json_decode($professions, true)
+        ));
+    }
+
+    $statement->close();
+
+    return $output;
+}
+
+function title_get_poster($tconst)
+{
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://imdb-api.com/en/API/Posters/" . IMDB_API_KEY . "/" . $tconst,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+    ));
+
+    $response = curl_exec($curl);
+
+    curl_close($curl);
+
+    $json_data = json_decode($response, true)['posters'];
+
+    // Find the first English poster (sorry)
+    try {
+        if (!is_array($json_data) || !isset($json_data[0])) {
+            return null;
+        }
+        $poster = $json_data[0];
+        foreach ($json_data as $p) {
+            if ($p['language'] == "en") {
+                $poster = $p;
+                break;
+            }
+        }
+
+        return $poster['link'];
+    } catch (\Throwable $th) {
+        return null;
+    }
+}
+
+function title_get_genres($tconst)
+{
+    $sql = "SELECT CONVERT(JSON_ARRAYAGG(Genres) USING utf8) FROM Titles NATURAL JOIN Genres WHERE tconst=?";
+
+    global $db;
+
+    $statement = $db->prepare($sql);
+    $statement->bind_param("s", $tconst);
+    $statement->execute();
+
+    $genres = null;
+    $statement->bind_result($genres);
+    $statement->fetch();
+    $statement->close();
+
+    return json_decode($genres, true);
 }
