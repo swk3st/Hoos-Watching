@@ -86,7 +86,14 @@ include("include/boilerplate/head.php");
         </thead>
         <tbody>
             <?php
-            $titles = get_titles(0, 25, SORT_TITLES_NUM_STARS, FILTER_TITLES_NONE, null, false);
+            $titles = get_titles(
+                $current_page * $page_size,
+                ($current_page + 1) * $page_size,
+                SORT_TITLES_YEAR,
+                FILTER_TITLES_NONE,
+                null,
+                false
+            );
             foreach ($titles as $title) :
             ?>
                 <tr>
@@ -125,6 +132,43 @@ include("include/boilerplate/head.php");
             <?php endforeach; ?>
         </tbody>
     </table>
+</div>
+
+<!-- Some page controls -->
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        <?php $disabled = $current_page - 1 < 0 ? "disabled" : ""; ?>
+        <li class="page-item <?php echo $disabled; ?>">
+            <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page - 1); ?>" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+            </a>
+        </li>
+        <?php if ($current_page - 1 >= 0) : ?>
+            <li class="page-item <?php echo $disabled; ?>">
+                <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page - 1); ?>">
+                    <?php echo ($current_page - 1) + 1; ?>
+                </a>
+            </li>
+        <?php endif; ?>
+        <li class="page-item active">
+            <a class="page-link" href="<?php echo "./index.php?page=" . $current_page; ?>">
+                <?php echo $current_page + 1; ?>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page + 1); ?>">
+                <?php echo ($current_page + 1) + 1; ?>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page + 1); ?>" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+            </a>
+        </li>
+    </ul>
+</nav>
 </div>
 
 <?php
