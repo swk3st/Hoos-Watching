@@ -7,30 +7,34 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav w-100">
-        <li class="nav-item active">
-          <a class="nav-link" href="home.php"> Home <span class="sr-only">(current)</span></a>
+        <?php
+        // Get the current page and set the active nav item based on the current page.
+        $nav_current_page = explode("/", $_SERVER["PHP_SELF"]);
+        $nav_current_page = $nav_current_page[sizeof($nav_current_page) - 1];
+        ?>
+        <li class="nav-item<?php echo $nav_current_page == "index.php" ? " active" : ""?>">
+          <a class="nav-link" href="index.php"> Home <span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item active">
+        <li class="nav-item<?php echo $nav_current_page == "profile.php" ? " active" : ""?>">
           <a class="nav-link" href="profile.php"> Profile <span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item active">
+        <li class="nav-item<?php echo $nav_current_page == "favorites.php" ? " active" : ""?>">
           <a class="nav-link" href="favorites.php"> Favorites <span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item active">
+        <li class="nav-item<?php echo $nav_current_page == "watchlist.php" ? " active" : ""?>">
           <a class="nav-link" href="watchlist.php"> Watchlist <span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item active">
+        <li class="nav-item<?php echo $nav_current_page == "friends.php" ? " active" : ""?>">
           <a class="nav-link" href="friends.php"> Friends <span class="sr-only">(current)</span></a>
         </li>
-        </li>
-        <li class="nav-item active">
+        <li class="nav-item<?php echo $nav_current_page == "favoritepeople.php" ? " active" : ""?>">
           <a class="nav-link" href="favoritepeople.php"> Favorite People <span class="sr-only">(current)</span></a>
         </li>
         <?php global $user;
         if (!$user->is_logged_in()) : ?>
           <form class="ml-auto form-inline">
-            <a class="btn btn-primary btn-sm mr-3" href="./sign_in.php">Log In</a>
-            <a class="btn btn-primary btn-sm" href="./sign_up.php">Sign Up</a>
+            <a class="btn btn-primary btn-sm mr-3<?php echo $nav_current_page == "sign_in.php" ? " active" : ""?>" href="sign_in.php">Log In</a>
+            <a class="btn btn-primary btn-sm<?php echo $nav_current_page == "sign_up.php" ? " active" : ""?>" href="sign_up.php">Sign Up</a>
           </form>
         <?php else : ?>
           <form action="logged_out.php" method="post" class="ml-auto form-inline">

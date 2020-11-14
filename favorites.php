@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $HEADER_INFO = array(
   "Hoo's Watching | Favorites",
   "Favorites",
-  $current_user->get_email()
+  $current_user->get_email() . "'s favorite titles"
 );
 include("include/boilerplate/head.php");
 ?>

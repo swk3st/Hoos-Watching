@@ -8,10 +8,10 @@ require_once("include/images.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Handle user creation form.
-    if (isset($_POST['email']) && isset($_POST['password']) && isset($_POST['conf-pass'])) {
+    if (isset($_POST['email']) && isset($_POST['password']) && isset($_POST['conf_pass'])) {
         $email = $_POST['email'];
         $password = $_POST['password'];
-        $confirm_password = $_POST['conf-pass'];
+        $confirm_password = $_POST['conf_pass'];
         if ($password != $confirm_password) {
             global $ERROR;
             $ERROR = "Account creation failed: passwords do not match.";
@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // $MESSAGE = "User creation succeeded! Now log in below.";
             } else {
                 global $ERROR;
-                $ERROR = "Account creation failed.";
+                $ERROR = "Account creation failed; database failure or password doesn't meet requirements.";
             }
         }
     }
@@ -66,12 +66,12 @@ include("include/boilerplate/head.php");
                         <div class="form-group">
                             <label for="password" class="text-info">Confirm Password:</label><br>
                             <input type="password" name="conf_pass" id="conf_pass" class="form-control">
-                            </br>
+                            <p class="text-muted mt-1">Password must contain upper and lowercase letters, at least one number, at least one symbol, and be 12 or more characters long.</p>
                         </div>
 
                         <div class="d-flex justify-content-between">
                             <button type="submit" class="btn btn-info btn-md">Sign up</button>
-                            <a href="sign_in.php" class="btn btn-link btn-md">Log in here</a>
+                            <a href="sign_in.php" class="btn btn-link btn-md" style="color: #17a2b8!important;">Log in here</a>
                         </div>
                     </form>
                 </div>

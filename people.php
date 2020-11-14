@@ -26,31 +26,31 @@ global $user;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['addFavoriteNconst'])) {
         global $MESSAGE;
-        if ($user->movie_add_to_favorites($_POST['addFavoriteNconst'])) {
-            $MESSAGE = "Added title to favorites!";
+        if ($user->name_add_favorite($_POST['addFavoriteNconst'])) {
+            $MESSAGE = "Added person to favorites!";
         } else {
-            $MESSAGE = "Failed to add title to favorites.";
+            $MESSAGE = "Failed to add person to favorites.";
         }
     } else if (isset($_POST['removeFavoriteNconst'])) {
         global $MESSAGE;
-        if ($user->movie_remove_from_favorites($_POST['removeFavoriteNconst'])) {
-            $MESSAGE = "Removed title from favorites!";
+        if ($user->name_remove_favorite($_POST['removeFavoriteNconst'])) {
+            $MESSAGE = "Removed person from favorites!";
         } else {
-            $MESSAGE = "Failed to remove title from favorites.";
+            $MESSAGE = "Failed to remove person from favorites.";
         }
     } else if (isset($_POST['rateNconst']) && isset($_POST['rateStars'])) {
         global $MESSAGE;
-        if ($user->movie_add_rating($_POST['rateNconst'], (int) $_POST['rateStars'])) {
-            $MESSAGE = "Successfully rated title!";
+        if ($user->name_add_rating($_POST['rateNconst'], (int) $_POST['rateStars'])) {
+            $MESSAGE = "Successfully rated person!";
         } else {
-            $MESSAGE = "Failed to rate title.";
+            $MESSAGE = "Failed to rate person.";
         }
     } else if (isset($_POST['removeRatingNconst'])) {
         global $MESSAGE;
-        if ($user->movie_remove_rating($_POST['removeRatingNconst'])) {
-            $MESSAGE = "Successfully removed rating for title!";
+        if ($user->name_remove_rating($_POST['removeRatingNconst'])) {
+            $MESSAGE = "Successfully removed rating for person!";
         } else {
-            $MESSAGE = "Failed to remove rating for title.";
+            $MESSAGE = "Failed to remove rating for person.";
         }
     }
 }

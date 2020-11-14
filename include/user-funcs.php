@@ -234,7 +234,7 @@ class User
         return $count;
     }
 
-    public function add_favorite_person($nconst, $order = null)
+    public function name_add_favorite($nconst, $order = null)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
@@ -245,8 +245,7 @@ class User
             $order = $this->get_favorite_person_count() + 1;
         }
 
-        $sql = "INSERT INTO UserToPersonData (email, nconst, personOrder)" .
-            "VALUES (?, ?, ?)";
+        $sql = "INSERT INTO UserToPersonData (email, nconst, personOrder) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE personOrder=?";
 
         global $db;
 
@@ -254,21 +253,65 @@ class User
         if (!$statement) {
             return false;
         }
-        $statement->bind_param("ssi", $this->email, $nconst, $order);
+        $statement->bind_param("ssii", $this->email, $nconst, $order, $order);
         $statement->execute();
         $statement->close();
 
         return true;
     }
 
-    public function remove_favorite_person($nconst)
+    public function name_remove_favorite($nconst)
     {
         // Make sure the user is logged in.
         if (!$this->is_logged_in()) {
             return false;
         }
 
-        $sql = "UPDATE UserToPersonData SET personOrder=NULL WHERE email=? AND nconst=?";
+        $sql = "UPDATE UserToPersonData SET personOrder=NULL WHERE email=? AND nconst=? ";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ss", $this->email, $nconst);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    public function name_add_rating($nconst, $number_of_stars)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "INSERT INTO UserToPersonData (email, nconst, number_of_stars) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE number_of_stars=?";
+
+        global $db;
+
+        $statement = $db->prepare($sql);
+        if (!$statement) {
+            return false;
+        }
+        $statement->bind_param("ssii", $this->email, $nconst, $number_of_stars, $number_of_stars);
+        $statement->execute();
+        $statement->close();
+
+        return true;
+    }
+
+    public function name_remove_rating($nconst)
+    {
+        // Make sure the user is logged in.
+        if (!$this->is_logged_in()) {
+            return false;
+        }
+
+        $sql = "UPDATE UserToPersonData SET number_of_stars=NULL WHERE email=? AND nconst=?";
 
         global $db;
 
@@ -1018,10 +1061,11 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         $numUserVotes = null;
         $statement->bind_result($watchOrder, $tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
 
+        $counter = 1;
         $output = array();
         while ($statement->fetch()) {
             array_push($output, array(
-                "watchOrder" => $watchOrder,
+                "watchOrder" => $counter,
                 "tconst" => $tconst,
                 "titleType" => $titleType,
                 "primaryTitle" => $primaryTitle,
@@ -1035,6 +1079,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
                 "userRating" => $userRating,
                 "numUserVotes" => $numUserVotes,
             ));
+            $counter++;
         }
 
         $statement->close();
@@ -1077,6 +1122,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         $numUserVotes = null;
         $statement->bind_result($favoritesRank, $tconst, $titleType, $primaryTitle, $originalTitle, $isAdult, $startYear, $endYear, $runtimeMinutes, $averageRating, $numVotes, $userRating, $numUserVotes);
 
+        $counter = 1;
         $output = array();
         while ($statement->fetch()) {
             array_push($output, array(
@@ -1094,6 +1140,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
                 "userRating" => $userRating,
                 "numUserVotes" => $numUserVotes,
             ));
+            $counter++;
         }
 
         $statement->close();

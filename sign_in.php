@@ -74,7 +74,7 @@ include("include/boilerplate/head.php");
 
                         <div class="d-flex justify-content-between">
                             <button type="submit" class="btn btn-info btn-md">Log In</button>
-                            <a href="sign_up.html" class="btn btn-link btn-md">Register here</a>
+                            <a href="sign_up.html" class="btn btn-link btn-md" style="color: #17a2b8!important;">Register here</a>
                         </div>
                     </form>
                 </div>

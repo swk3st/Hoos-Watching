@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $HEADER_INFO = array(
   "Hoo's Watching | Watchlist",
   "Watchlist",
-  $current_user->get_email()
+  $current_user->get_email() . "'s movies to watch later"
 );
 include("include/boilerplate/head.php");
 ?>

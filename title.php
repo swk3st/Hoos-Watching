@@ -236,7 +236,7 @@ include("include/boilerplate/head.php");
                     <td><?php echo $person['characters'] ? join(", ", $person['characters']) : "" ?></td>
                     <td><?php
                         if ($person['birthYear']) {
-                            echo (int) ($person['deathYear'] ? (int) $person['deathYear'] : 2020) - $person['birthYear'];
+                            echo (int) ($person['deathYear'] ? (int) $person['deathYear'] : intval(gmdate("Y"))) - $person['birthYear'];
                         } else {
                             echo "";
                         }

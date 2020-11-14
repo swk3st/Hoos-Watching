@@ -37,6 +37,25 @@ function check_user_exists($email)
 }
 
 /**
+ * Check if a password is valid.
+ */
+function check_password_valid($password)
+{
+    global $db;
+
+    $sql = "CALL check_password(?);";
+
+    $statement = $db->prepare($sql);
+    $statement->bind_param("s", $password);
+    $results = $statement->execute();
+    $password_valid = null;
+    $statement->bind_result($password_valid);
+    $statement->fetch();
+    $statement->close();
+    return $password_valid;
+}
+
+/**
  * Create a new user given an email and a password.
  */
 function create_new_user($email, $password)
@@ -45,6 +64,11 @@ function create_new_user($email, $password)
 
     // First check if the user already exists.
     if (check_user_exists($email)) {
+        return false;
+    }
+
+    // Now check if the password is valid.
+    if (!check_password_valid($password)) {
         return false;
     }
 

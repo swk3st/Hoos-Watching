@@ -134,6 +134,18 @@ include("include/boilerplate/head.php");
                       <a href="./rated_titles.php?email=<?php echo $current_user->get_email(); ?>">View rated movies</a>
                     </div>
                   </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Favorited people</h6>
+                    </div>
+                    <div class="col-sm-6 text-secondary">
+                    <?php echo $current_user->count(); ?>
+                    </div>
+                    <div class="col-sm-3 text-secondary text-md-right">
+                      <a href="./rated_titles.php?email=<?php echo $current_user->get_email(); ?>">View rated movies</a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

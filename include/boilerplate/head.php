@@ -62,7 +62,7 @@
     global $ERROR;
     if (isset($ERROR)) :
     ?>
-        <div class="container">
+        <div class="container mb-3">
             <div class="alert alert-danger" role="alert">
                 <?php echo $ERROR; ?>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -76,7 +76,7 @@
     global $MESSAGE;
     if (isset($MESSAGE)) :
     ?>
-        <div class="container">
+        <div class="container mb-3">
             <div class="alert alert-primary" role="alert">
                 <?php echo $MESSAGE; ?>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
