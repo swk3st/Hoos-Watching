@@ -16,9 +16,9 @@ if (DEBUG) {
 
 function debug_echo($value)
 {
-    if (!DEBUG) {
-        return;
-    }
-    $s = strval($value);
-    echo "<div class=\"container border rounded border-danger mt-3 mb-3 p-3\"> $s </div>";
+    // if (!DEBUG) {
+    //     return;
+    // }
+    // $s = strval($value);
+    // echo "<div class=\"container border rounded border-danger mt-3 mb-3 p-3\"> $s </div>";
 }
