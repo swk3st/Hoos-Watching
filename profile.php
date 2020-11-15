@@ -137,13 +137,13 @@ include("include/boilerplate/head.php");
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
-                      <h6 class="mb-0">Favorited people</h6>
+                      <h6 class="mb-0">Favorite people</h6>
                     </div>
                     <div class="col-sm-6 text-secondary">
                     <?php echo $current_user->name_get_favorites_count(); ?>
                     </div>
                     <div class="col-sm-3 text-secondary text-md-right">
-                      <a href="./rated_titles.php?email=<?php echo $current_user->get_email(); ?>">View rated movies</a>
+                      <a href="./favoritepeople.php?email=<?php echo $current_user->get_email(); ?>">View favorite people</a>
                     </div>
                   </div>
                 </div>
