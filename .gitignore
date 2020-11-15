@@ -1,3 +1,5 @@
+.idea
 .vscode
+*.iml
 include/secret.php
 settings.conf
