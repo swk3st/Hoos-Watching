@@ -45,13 +45,7 @@ $ALL_TITLE_FILTERS = array(
 /**
  * Get titles in a certain range, sorted via one of many defined ways:
  * 
- * SORT_TITLES_PRIMARY_TITLE - via primary title
- * SORT_TITLES_AVERAGE_RATING - via average IMDb vote
- * SORT_TITLES_NUM_VOTES - via number of IMDb votes
- * SORT_TITLES_NUM_STARS - via number of IMDb votes times the average number of stars
- * SORT_TITLES_YEAR - via the title's year
- * SORT_TITLE_USER_RATING - via the site's rating for a movie
- * SORT_TITLE_NUM_USER_RATINGS - via the number of user ratings for a movie
+ * See the defined filters and sorts above.
  */
 function get_titles($start, $end, $sort_type = SORT_TITLES_NUM_STARS, $filter_type = FILTER_TITLES_NONE, $filter_value = null, $ascending = true)
 {
@@ -107,7 +101,7 @@ LIMIT {start}, {count}";
     $sql = str_replace("{start}", strval((int) $start), $sql);
     $sql = str_replace("{count}", strval((int) $end - (int) $start), $sql);
 
-    debug_echo($sql);
+    // debug_echo($sql);
 
     // Now perform the query.
     $statement = $db->prepare($sql);

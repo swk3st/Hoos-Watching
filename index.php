@@ -9,6 +9,12 @@ require_once("include/util.php");
 $current_page = 0;
 $page_size = 25;
 
+// For pagination.
+$search_sort = SORT_TITLES_YEAR;
+$search_filter = FILTER_TITLES_NONE;
+$search_text = null;
+$search_order = false;
+
 // Handle POST requests.
 $login_succeeded = null;
 $creation_succeeded = null;
@@ -32,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Handle user creation form.
-    if (isset($_POST['createEmail']) && isset($_POST['createPassword'])) {
+    else if (isset($_POST['createEmail']) && isset($_POST['createPassword'])) {
         if (check_user_exists($_POST['createEmail'])) {
             global $MESSAGE;
             $MESSAGE = "Account creation failed: user already exists.";
@@ -49,11 +55,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Handle logout request.
-    if (isset($_POST['logout']) && $_POST['logout'] == "1") {
+    else if (isset($_POST['logout']) && $_POST['logout'] == "1") {
         session_unset();
         global $user;
         $user = new User();
     }
+}
+
+
+$get_str = "";
+// Handle search.
+if (isset($_GET['filter']) && isset($_GET['searchText']) && isset($_GET['sort']) && isset($_GET['order'])) {
+    $search_sort = constant($_GET['sort']);
+    $search_filter = constant($_GET['filter']);
+    $search_text = strlen($_GET['searchText']) > 0 ? $_GET['searchText'] : null;
+    $search_order = (bool) $_GET['order'];
+
+    $get_str =  "&filter=" . $_GET['filter']  . "&searchText=" . $_GET['searchText']  . "&sort=" . $_GET['sort']  . "&order=" . $_GET['order']; 
 }
 
 // if ($_SERVER["REQUEST_METHOD"] == "GET") {
@@ -73,6 +91,45 @@ include("include/boilerplate/head.php");
 ?>
 
 <div class="container">
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+        <div class="input-group my-5">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="search_text">Search</label>
+            </div>
+            <input type="text" class="form-control" aria-label="Search text" aria-describedby="search_text" name="searchText">
+            <div class="input-group-append">
+                <select class="custom-select" style="border-radius: 0px" id="filter" name="filter">
+                    <option selected value="FILTER_TITLES_NONE">Search criteria...</option>
+                    <option value="FILTER_TITLES_NONE">None</option>
+                    <option value="FILTER_TITLES_PRIMARY_TITLE">Title</option>
+                    <option value="FILTER_TITLES_AVG_RATING">Minimum avg. rating</option>
+                    <option value="FILTER_TITLES_USER_RATING">Minimum avg. user rating</option>
+                    <option value="FILTER_TITLES_GENRE">Genre</option>
+                    <option value="FILTER_TITLES_TYPE">Type (movie, tvShow, etc.)</option>
+                </select>
+                <select class="custom-select" style="border-radius: 0px;" id="sort" name="sort">
+                    <option selected value="SORT_TITLES_YEAR">Sort by...</option>
+                    <option value="SORT_TITLES_PRIMARY_TITLE">Title</option>
+                    <option value="SORT_TITLES_AVERAGE_RATING">Average rating</option>
+                    <option value="SORT_TITLES_NUM_VOTES">Num. votes</option>
+                    <option value="SORT_TITLES_NUM_STARS">Total num. stars</option>
+                    <option value="SORT_TITLES_YEAR">Year</option>
+                    <option value="SORT_TITLES_LENGTH">Length</option>
+                    <option value="SORT_TITLES_USER_RATING">Avg. user rating</option>
+                    <option value="SORT_TITLES_NUM_USER_RATINGS">Num. user ratings</option>
+                </select>
+                <select class="custom-select" style="border-radius: 0px;" id="order" name="order">
+                    <option selected value="0">Order</option>
+                    <option value="1">Ascending</option>
+                    <option value="0">Descending</option>
+                </select>
+                <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="container">
     <table class="table table-striped table-sm">
         <thead>
             <tr>
@@ -89,10 +146,10 @@ include("include/boilerplate/head.php");
             $titles = get_titles(
                 $current_page * $page_size,
                 ($current_page + 1) * $page_size,
-                SORT_TITLES_YEAR,
-                FILTER_TITLES_NONE,
-                null,
-                false
+                $search_sort,
+                $search_filter,
+                $search_text,
+                $search_order
             );
             foreach ($titles as $title) :
             ?>
@@ -139,30 +196,30 @@ include("include/boilerplate/head.php");
     <ul class="pagination justify-content-center">
         <?php $disabled = $current_page - 1 < 0 ? "disabled" : ""; ?>
         <li class="page-item <?php echo $disabled; ?>">
-            <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page - 1); ?>" aria-label="Previous">
+            <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page - 1) . $get_str; ?>" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
                 <span class="sr-only">Previous</span>
             </a>
         </li>
         <?php if ($current_page - 1 >= 0) : ?>
             <li class="page-item <?php echo $disabled; ?>">
-                <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page - 1); ?>">
+                <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page - 1) . $get_str; ?>">
                     <?php echo ($current_page - 1) + 1; ?>
                 </a>
             </li>
         <?php endif; ?>
         <li class="page-item active">
-            <a class="page-link" href="<?php echo "./index.php?page=" . $current_page; ?>">
+            <a class="page-link" href="<?php echo "./index.php?page=" . $current_page . $get_str; ?>">
                 <?php echo $current_page + 1; ?>
             </a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page + 1); ?>">
+            <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page + 1) . $get_str; ?>">
                 <?php echo ($current_page + 1) + 1; ?>
             </a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page + 1); ?>" aria-label="Next">
+            <a class="page-link" href="<?php echo "./index.php?page=" . ($current_page + 1) . $get_str; ?>" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
                 <span class="sr-only">Next</span>
             </a>
