@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user->name_remove_favorite($nconst);
 
         global $MESSAGE;
-        $MESSAGE = "Removed " . $nconst . " from your favorites.";
+        $MESSAGE = "Removed person from your favorites.";
     }
 }
 

@@ -359,7 +359,7 @@ class User
 
     public function name_get_favorites()
     {
-        $sql = "SELECT nconst, primaryName, birthYear, deathYear, ( SELECT CONVERT(JSON_ARRAYAGG(primaryProfession) USING utf8) FROM Professions as p WHERE p.nconst = n.nconst GROUP BY n.nconst ) FROM Names as n NATURAL JOIN UserToPersonData WHERE email=?";
+        $sql = "SELECT nconst, primaryName, birthYear, deathYear, ( SELECT CONVERT(JSON_ARRAYAGG(primaryProfession) USING utf8) FROM Professions as p WHERE p.nconst = n.nconst GROUP BY n.nconst ) FROM Names as n NATURAL JOIN UserToPersonData WHERE email=? AND personOrder IS NOT NULL";
 
         global $db;
 
@@ -1126,7 +1126,7 @@ ON DUPLICATE KEY UPDATE number_of_stars=?";
         $output = array();
         while ($statement->fetch()) {
             array_push($output, array(
-                "favoritesRank" => $favoritesRank,
+                "favoritesRank" => $counter,
                 "tconst" => $tconst,
                 "titleType" => $titleType,
                 "primaryTitle" => $primaryTitle,
