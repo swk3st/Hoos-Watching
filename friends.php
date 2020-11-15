@@ -35,13 +35,18 @@ $current_user_is_self = $user->get_email() == $current_user->get_email();
 // Do actions
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['friends_add_email']) && $current_user_is_self) {
-        $friend_email = $_POST['friends_add_email'];
-        $user->friends_add($friend_email);
+        $friend_email = htmlspecialchars($_POST['friends_add_email']);
+        if (!check_user_exists($friend_email)) {
+            global $ERROR;
+            $ERROR = $friend_email . " does not exist on this website.";
+        } else {
+            $user->friends_add($friend_email);
 
-        global $MESSAGE;
-        $MESSAGE = "Successfully added " . $friend_email . " as a friend!";
+            global $MESSAGE;
+            $MESSAGE = "Successfully added " . $friend_email . " as a friend!";
+        }
     } else if (isset($_POST['friends_remove_email']) && $current_user_is_self) {
-        $friend_email = $_POST['friends_remove_email'];
+        $friend_email = htmlspecialchars($_POST['friends_remove_email']);
         $user->friends_remove($friend_email);
 
         global $MESSAGE;

@@ -115,8 +115,8 @@ include("include/boilerplate/head.php");
                     <option value="SORT_TITLES_NUM_STARS">Total num. stars</option>
                     <option value="SORT_TITLES_YEAR">Year</option>
                     <option value="SORT_TITLES_LENGTH">Length</option>
-                    <option value="SORT_TITLES_USER_RATING">Avg. user rating</option>
-                    <option value="SORT_TITLES_NUM_USER_RATINGS">Num. user ratings</option>
+                    <option value="SORT_TITLE_USER_RATING">Avg. user rating</option>
+                    <option value="SORT_TITLE_NUM_USER_RATINGS">Num. user ratings</option>
                 </select>
                 <select class="custom-select" style="border-radius: 0px;" id="order" name="order">
                     <option selected value="0">Order</option>
