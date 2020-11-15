@@ -9,6 +9,10 @@
 <body>
   <?php $IPATH = $_SERVER["DOCUMENT_ROOT"]."./assets/php/"; include($PATH."navbar.html"); ?>
 
+  <?php $IPATH = $_SERVER["DOCUMENT_ROOT"].; include($PATH."searchBar.html"); ?>
+
+
+
 </body>
 
 </html>
