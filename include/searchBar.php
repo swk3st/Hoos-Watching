@@ -11,7 +11,7 @@
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
-    <link href="assets\php\searchBarStyle.css" rel="stylesheet">
+    <link href="assets\css\searchBarStyle.css" rel="stylesheet">
 
     <script src="searchJSFunc.js"></script>
 
