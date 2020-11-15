@@ -35,7 +35,7 @@ $HEADER_INFO = array(
 );
 include("include/boilerplate/head.php");
 
-include("include/newsearch.php");
+include("newsearch.php");
 
 ?>
 
