@@ -11,7 +11,7 @@ $page_size = 25;
 
 // For pagination.
 $search_sort = SORT_TITLES_YEAR;
-$search_filter = FILTER_TITLES_NONE;
+$search_filter = FILTER_TITLES_PRIMARY_TITLE;
 $search_text = null;
 $search_order = false;
 
@@ -67,7 +67,7 @@ $get_str = "";
 // Handle search.
 if (isset($_GET['filter']) && isset($_GET['searchText']) && isset($_GET['sort']) && isset($_GET['order'])) {
     $search_sort = constant($_GET['sort']);
-    $search_filter = constant($_GET['filter']);
+    $search_filter = strlen($_GET['searchText']) > 0 ? constant($_GET['filter']) : FILTER_TITLES_NONE;
     $search_text = strlen($_GET['searchText']) > 0 ? $_GET['searchText'] : null;
     $search_order = (bool) $_GET['order'];
 
@@ -96,11 +96,11 @@ include("include/boilerplate/head.php");
             <div class="input-group-prepend">
                 <label class="input-group-text" for="search_text">Search</label>
             </div>
-            <input type="text" class="form-control" aria-label="Search text" aria-describedby="search_text" name="searchText">
+            <input type="text" class="form-control" aria-label="Search text" aria-describedby="search_text" name="searchText" value="<?php echo isset($_GET['searchText']) ? $_GET['searchText'] : "" ?>">
             <div class="input-group-append">
                 <select class="custom-select" style="border-radius: 0px" id="filter" name="filter">
-                    <option selected value="FILTER_TITLES_NONE">Search criteria...</option>
-                    <option value="FILTER_TITLES_NONE">None</option>
+                    <option selected value="FILTER_TITLES_PRIMARY_TITLE">Search criteria...</option>
+                    <!-- <option value="FILTER_TITLES_NONE">None</option> -->
                     <option value="FILTER_TITLES_PRIMARY_TITLE">Title</option>
                     <option value="FILTER_TITLES_AVG_RATING">Minimum avg. rating</option>
                     <option value="FILTER_TITLES_USER_RATING">Minimum avg. user rating</option>
